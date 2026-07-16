@@ -1,0 +1,1387 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+    try {
+      if (localStorage.getItem('cbt-dark-mode') === 'true') document.documentElement.classList.add('dark');
+      else document.documentElement.classList.remove('dark');
+    } catch (_) {}
+  </script>
+  <title>ARCBT SMAN 2 Kuningan</title>
+  <link rel="icon" type="image/png" href="https://iili.io/KSdduPR.png">
+
+  <script src="js/config.js"></script>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#234198',
+            accent: '#F59E0B',
+            darkBg: '#0F172A',
+            darkPanel: '#1E293B',
+            lightBg: '#F7F8FC'
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace']
+          }
+        }
+      }
+    }
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mammoth@1.6.0/mammoth.browser.min.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/exam.css">
+  <link rel="stylesheet" href="css/admin.css">
+
+  <script src="js/core/storage-supabase.js"></script>
+  <script src="js/ui/dialogs.js"></script>
+  <script src="js/shared/media-settings.js"></script>
+  <script src="js/exam/progress.js"></script>
+  <script src="js/ui/admin-fit.js"></script>
+  <script src="js/shared/analysis.js"></script>
+  <script src="js/ui/theme.js"></script>
+  <script src="js/auth/student.js"></script>
+  <script src="js/core/database.js"></script>
+  <script src="js/exam/viewport.js"></script>
+  <script src="js/exam/packets.js"></script>
+  <script src="js/core/exports.js"></script>
+</head>
+
+<body
+  class="bg-lightBg dark:bg-darkBg text-slate-800 dark:text-slate-100 min-h-screen flex flex-col">
+
+  <div id="main-system-view" class="hidden flex-grow flex flex-col md:flex-row bg-slate-100 dark:bg-darkBg relative">
+
+    <aside id="system-sidebar"
+      class="hidden md:flex animate-theme-blink text-[#d0dfed] flex-col h-screen sticky top-0 flex-shrink-0 z-20 shadow-lg transition-all duration-300 ease-in-out">
+
+      <div
+        class="logo-area h-[60px] bg-gradient-animated flex relative items-center px-4 text-white font-bold text-xl md:text-2xl justify-center cursor-pointer transition-all duration-300 ease-in-out"
+        style="text-shadow: 1px 1px 3px rgba(0,0,0,0.5);">
+        <div class="flex items-center">
+          <span
+            class="logo-text font-black tracking-widest transition-all duration-300 ease-in-out"><span
+              class="text-white">AR</span><span class="text-[#f59e0b]">CBT</span></span>
+        </div>
+        <i id="btn-collapse-sidebar"
+          class="fas fa-arrow-left absolute right-4 text-sm p-2 rounded-full hover:bg-white/20 transition-all hover:scale-110 cursor-pointer"></i>
+      </div>
+
+      <div class="flex-1 overflow-y-auto sidebar-scroll py-4 text-sm font-medium">
+
+        <div id="admin-nav-links" class="hidden flex-col">
+          <button data-nav="admin-dashboard"
+            class="nav-btn flex items-center px-3 py-2.5 mx-3 mb-1 bg-white/20 text-white rounded-md border border-white/30 shadow-md transition-all duration-300">
+            <i class="fas fa-th-large w-6 text-center text-[#3b82f6]"></i>
+            <span class="ml-2 menu-text font-bold">Dashboard</span>
+          </button>
+
+          <button data-nav="admin-monitor"
+            class="nav-btn sidebar-menu-link group flex items-center px-3 py-2.5 mx-3 mb-1 rounded-md text-[#b5cbdf] hover:text-white">
+            <i class="fas fa-desktop w-6 text-center text-[#9db9d8] group-hover:text-white transition-colors"></i>
+            <span class="ml-2 menu-text">Monitor Siswa</span>
+          </button>
+
+          <button data-nav="admin-students"
+            class="nav-btn sidebar-menu-link group flex items-center px-3 py-2.5 mx-3 mb-1 rounded-md text-[#b5cbdf] hover:text-white">
+            <i class="fas fa-user-graduate w-6 text-center text-[#9db9d8] group-hover:text-white transition-colors"></i>
+            <span class="ml-2 menu-text">Data Siswa</span>
+          </button>
+
+          <button data-nav="admin-admins"
+            class="nav-btn sidebar-menu-link group flex items-center px-3 py-2.5 mx-3 mb-1 rounded-md text-[#b5cbdf] hover:text-white">
+            <i class="fas fa-user-shield w-6 text-center text-[#9db9d8] group-hover:text-white transition-colors"></i>
+            <span class="ml-2 menu-text">Data Admin</span>
+          </button>
+
+          <button data-nav="admin-banksoal"
+            class="nav-btn sidebar-menu-link group flex items-center px-3 py-2.5 mx-3 mb-1 rounded-md text-[#b5cbdf] hover:text-white">
+            <i class="fas fa-folder-open w-6 text-center text-[#9db9d8] group-hover:text-white transition-colors"></i>
+            <span class="ml-2 menu-text">Bank Soal</span>
+          </button>
+
+          <button data-nav="admin-schedule"
+            class="nav-btn sidebar-menu-link group flex items-center px-3 py-2.5 mx-3 mb-1 rounded-md text-[#b5cbdf] hover:text-white">
+            <i class="fas fa-calendar-alt w-6 text-center text-[#9db9d8] group-hover:text-white transition-colors"></i>
+            <span class="ml-2 menu-text">Jadwal Ujian</span>
+          </button>
+
+          <button data-nav="admin-results"
+            class="nav-btn sidebar-menu-link group flex items-center px-3 py-2.5 mx-3 mb-1 rounded-md text-[#b5cbdf] hover:text-white">
+            <i class="fas fa-poll w-6 text-center text-[#9db9d8] group-hover:text-white transition-colors"></i>
+            <span class="ml-2 menu-text">Hasil Ujian</span>
+          </button>
+
+          <button data-nav="admin-settings"
+            class="nav-btn sidebar-menu-link group flex items-center px-3 py-2.5 mx-3 mb-1 rounded-md text-[#b5cbdf] hover:text-white">
+            <i class="fas fa-cog w-6 text-center text-[#9db9d8] group-hover:text-white transition-colors"></i>
+            <span class="ml-2 menu-text">Pengaturan</span>
+          </button>
+        </div>
+      </div>
+
+      <div id="sidebar-footer"
+        class="hidden md:flex p-3 border-t border-white/10 flex-col gap-2 transition-all duration-300">
+        <button id="btn-sidebar-logout" type="button"
+          class="w-full flex items-center justify-center gap-2 p-2.5 rounded-lg bg-red-500/20 hover:bg-red-500/30 border border-red-400/30 text-white text-xs font-bold transition active:scale-95">
+          <i class="fas fa-sign-out-alt"></i>
+          <span class="menu-text">Keluar</span>
+        </button>
+      </div>
+    </aside>
+
+    <nav id="mobile-admin-nav"
+      class="hidden fixed bottom-0 left-0 right-0 h-[calc(65px+env(safe-area-inset-bottom))] animate-theme-blink border-t border-white/10 z-[50] flex justify-around items-center px-1 shadow-[0_-4px_10px_-2px_rgba(0,0,0,0.15)] pb-[env(safe-area-inset-bottom)] select-none">
+      <button data-nav="admin-dashboard"
+        class="nav-btn flex flex-col items-center justify-center w-full h-full text-[#3b82f6] transition-colors relative pt-1 active:scale-95">
+        <i class="fas fa-th-large text-lg mb-0.5"></i>
+        <span class="text-[8px] font-bold tracking-wide">Beranda</span>
+      </button>
+      <button data-nav="admin-monitor"
+        class="nav-btn flex flex-col items-center justify-center w-full h-full text-[#b5cbdf] transition-colors relative pt-1 active:scale-95">
+        <i class="fas fa-desktop text-lg mb-0.5"></i>
+        <span class="text-[8px] font-bold tracking-wide">Monitor</span>
+      </button>
+      <button data-nav="admin-students"
+        class="nav-btn flex flex-col items-center justify-center w-full h-full text-[#b5cbdf] transition-colors relative pt-1 active:scale-95">
+        <i class="fas fa-user-graduate text-lg mb-0.5"></i>
+        <span class="text-[8px] font-bold tracking-wide">Siswa</span>
+      </button>
+      <button data-nav="admin-admins"
+        class="nav-btn flex flex-col items-center justify-center w-full h-full text-[#b5cbdf] transition-colors relative pt-1 active:scale-95">
+        <i class="fas fa-user-shield text-lg mb-0.5"></i>
+        <span class="text-[8px] font-bold tracking-wide">Admin</span>
+      </button>
+      <button data-nav="admin-banksoal"
+        class="nav-btn flex flex-col items-center justify-center w-full h-full text-[#b5cbdf] transition-colors relative pt-1 active:scale-95">
+        <i class="fas fa-folder-open text-lg mb-0.5"></i>
+        <span class="text-[8px] font-bold tracking-wide">Naskah</span>
+      </button>
+      <button data-nav="admin-schedule"
+        class="nav-btn flex flex-col items-center justify-center w-full h-full text-[#b5cbdf] transition-colors relative pt-1 active:scale-95">
+        <i class="fas fa-calendar-alt text-lg mb-0.5"></i>
+        <span class="text-[8px] font-bold tracking-wide">Jadwal</span>
+      </button>
+      <button data-nav="admin-results"
+        class="nav-btn flex flex-col items-center justify-center w-full h-full text-[#b5cbdf] transition-colors relative pt-1 active:scale-95">
+        <i class="fas fa-poll text-lg mb-0.5"></i>
+        <span class="text-[8px] font-bold tracking-wide">Hasil</span>
+      </button>
+      <button data-nav="admin-settings"
+        class="nav-btn flex flex-col items-center justify-center w-full h-full text-[#b5cbdf] transition-colors relative pt-1 active:scale-95">
+        <i class="fas fa-cog text-lg mb-0.5"></i>
+        <span class="text-[8px] font-bold tracking-wide">Pengaturan</span>
+      </button>
+    </nav>
+
+    <div class="flex-grow flex flex-col min-w-0 pb-24 md:pb-0">
+
+      <header
+        class="min-h-[55px] md:min-h-[60px] animate-theme-blink sticky top-0 flex-shrink-0 flex items-center justify-between px-3 md:px-4 text-white z-30 shadow-md">
+        <div class="flex items-center gap-1.5 md:gap-2.5 flex-1 min-w-0 pr-2">
+          <img id="header-school-logo" src="https://iili.io/B5MMKiX.png" alt="Logo School"
+            class="w-7 h-7 md:w-9 md:h-9 object-contain drop-shadow-md transition-all duration-300 flex-shrink-0"
+            onerror="this.src='https://placehold.co/100?text=LOGO'">
+          <div id="header-text-container" class="flex flex-col justify-center min-w-0 flex-1 overflow-hidden">
+            <span id="header-school-name"
+              class="font-black tracking-wide leading-tight drop-shadow-sm">SMA
+              Negeri 2 Kuningan</span>
+            <span id="header-exam-title"
+              class="text-amber-400 font-bold tracking-wide drop-shadow-sm mt-0.5">Asesmen
+              Sumatif Akhir Tahun</span>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2 sm:gap-3">
+          <div id="header-profile-container" class="hidden relative z-50">
+            <button id="btn-header-profile"
+              class="flex items-center gap-1 px-1 py-1 rounded-xl hover:bg-white/10 transition active:scale-95 focus:outline-none select-none text-left max-w-[130px] sm:max-w-none">
+              <div class="flex flex-col text-right justify-center gap-0 overflow-hidden max-w-[70px] sm:max-w-[150px]">
+                <span id="header-profile-name"
+                  class="text-[9px] sm:text-sm font-black tracking-wide leading-none text-gradient-animated truncate"></span>
+                <span id="header-profile-role"
+                  class="text-[8px] sm:text-xs font-medium leading-none text-white mt-0.5 truncate"></span>
+              </div>
+              <div
+                class="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-slate-600 dark:text-slate-200 border border-white/20">
+                <i class="fas fa-user text-sm"></i>
+              </div>
+              <i class="fas fa-caret-down text-[10px] text-slate-400"></i>
+            </button>
+
+            <div id="header-profile-dropdown"
+              class="hidden absolute right-0 mt-2 w-48 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl z-50 overflow-hidden py-1.5 animate-in fade-in slide-in-from-top-2 duration-150">
+              <button id="btn-profile-change-password"
+                class="w-full flex items-center gap-2.5 px-4 py-2.5 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition text-left">
+                <i class="fas fa-user-edit text-[#3b82f6]"></i>
+                <span>Ganti Password</span>
+              </button>
+              <button id="btn-profile-logout"
+                class="w-full flex items-center gap-2.5 px-4 py-2.5 text-xs font-semibold text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/20 transition text-left">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Keluar</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <section id="admin-active-session-bar"
+        class="hidden bg-primary px-4 sm:px-6 py-2.5 sm:py-3.5 text-white flex flex-col gap-2 sm:gap-3 relative shadow-inner">
+        <div class="flex flex-row justify-between items-center gap-2 w-full">
+          <div class="flex items-center gap-1.5 sm:gap-2">
+            <div class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-emerald-500 animate-ping"></div>
+            <h3 class="text-[9px] sm:text-xs md:text-sm font-black tracking-wide uppercase">
+              <span class="dashboard-session-label-full">Informasi Sesi Ujian dan Token Hari Ini</span>
+              <span class="dashboard-session-label-short">Sesi Ujian & Token Hari Ini</span>
+            </h3>
+          </div>
+          <button id="btn-generate-all-tokens"
+            class="text-[8px] sm:text-[10px] font-extrabold bg-accent hover:bg-accent/90 text-white px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg shadow uppercase tracking-wider transition flex items-center gap-1 shrink-0">
+            <i data-lucide="refresh-cw" class="w-2.5 h-2.5 sm:w-3 sm:h-3"></i>
+            Generate Token
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div
+            class="bg-white/95 dark:bg-slate-900/95 p-3.5 sm:p-5 rounded-2xl border border-slate-200/55 dark:border-white/10 text-center flex flex-col justify-center shadow-lg transition-all hover:scale-[1.01]">
+            <span
+              class="text-xs sm:text-sm md:text-base font-black text-primary dark:text-blue-400 tracking-wider uppercase mb-1 sm:mb-1.5">Kelas
+              X</span>
+            <span id="token-display-x"
+              class="monospace text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-emerald-800 dark:text-emerald-400 tracking-widest break-all">-----</span>
+          </div>
+          <div
+            class="bg-white/95 dark:bg-slate-900/95 p-3.5 sm:p-5 rounded-2xl border border-slate-200/55 dark:border-white/10 text-center flex flex-col justify-center shadow-lg transition-all hover:scale-[1.01]">
+            <span
+              class="text-xs sm:text-sm md:text-base font-black text-primary dark:text-blue-400 tracking-wider uppercase mb-1 sm:mb-1.5">Kelas
+              XI</span>
+            <span id="token-display-xi"
+              class="monospace text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-emerald-800 dark:text-emerald-400 tracking-widest break-all">-----</span>
+          </div>
+          <div
+            class="bg-white/95 dark:bg-slate-900/95 p-3.5 sm:p-5 rounded-2xl border border-slate-200/55 dark:border-white/10 text-center flex flex-col justify-center shadow-lg transition-all hover:scale-[1.01]">
+            <span
+              class="text-xs sm:text-sm md:text-base font-black text-primary dark:text-blue-400 tracking-wider uppercase mb-1 sm:mb-1.5">Kelas
+              XII</span>
+            <span id="token-display-xii"
+              class="monospace text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-emerald-800 dark:text-emerald-400 tracking-widest break-all">-----</span>
+          </div>
+        </div>
+      </section>
+
+      <main class="flex-grow overflow-y-auto p-3 sm:p-4 md:p-6 grid-bg relative">
+
+        <article id="view-admin-dashboard" class="page-view hidden space-y-4 sm:space-y-6">
+          <div class="flex justify-between items-center">
+            <div>
+              <h1 class="text-sm sm:text-xl md:text-2xl font-black tracking-tight text-primary dark:text-white">Admin
+                Dashboard</h1>
+              <p class="text-[9px] sm:text-xs text-slate-500 dark:text-slate-400 font-medium">Ringkasan analitik
+                real-time sistem evaluasi.</p>
+            </div>
+            <div class="flex items-center gap-1.5 sm:gap-2">
+              <span id="cache-timer-badge"
+                class="text-[8px] sm:text-[10px] px-2 py-0.5 sm:py-1 rounded bg-amber-500/10 text-amber-500 border border-amber-500/20 monospace font-semibold">Cache:
+                Ready</span>
+              <button id="btn-refresh-database"
+                class="group relative p-1.5 sm:p-2 rounded-xl bg-primary/10 text-primary dark:text-white hover:bg-primary/20 hover:scale-105 active:scale-95 transition-all duration-200 shadow-sm hover:shadow-md"
+                title="Refresh data dari database">
+                <span class="absolute inset-0 rounded-xl bg-primary/10 opacity-0 group-hover:opacity-100 transition duration-200"></span>
+                <i data-lucide="refresh-cw" class="relative w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform duration-500 group-hover:rotate-180"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="mb-5 md:mb-6">
+            <div
+              class="bg-[#7a93a8] text-white text-xs md:text-sm font-bold uppercase px-3 md:px-4 py-2.5 md:py-3 rounded-t-xl">
+              Rekap Data Sistem
+            </div>
+            <div
+              class="bg-white dark:bg-slate-900 p-3 md:p-5 rounded-b-xl border border-gray-200 dark:border-slate-800 border-t-0 shadow-sm grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-4">
+
+              <div
+                class="bg-[#7e37d8] rounded-xl text-white p-3 md:p-4 flex justify-between items-center relative overflow-hidden shadow-md md:hover:shadow-lg transition-all duration-300 md:hover:-translate-y-1 h-20 md:h-24">
+                <div class="z-10">
+                  <div class="text-[10px] md:text-xs font-semibold uppercase mb-0.5 md:mb-1 opacity-90">Siswa</div>
+                  <h4 id="stat-total-siswa" class="text-xl md:text-2xl font-bold monospace">0</h4>
+                </div>
+                <i class="fas fa-users text-4xl md:text-5xl absolute -right-2 -bottom-2 opacity-25 z-0"></i>
+              </div>
+
+              <div
+                class="bg-[#1cc07b] rounded-xl text-white p-3 md:p-4 flex justify-between items-center relative overflow-hidden shadow-md md:hover:shadow-lg transition-all duration-300 md:hover:-translate-y-1 h-20 md:h-24">
+                <div class="z-10">
+                  <div class="text-[10px] md:text-xs font-semibold uppercase mb-0.5 md:mb-1 opacity-90">Kelas</div>
+                  <h4 id="stat-total-kelas" class="text-xl md:text-2xl font-bold monospace">0</h4>
+                </div>
+                <i class="fas fa-building text-4xl md:text-5xl absolute -right-2 -bottom-2 opacity-25 z-0"></i>
+              </div>
+
+              <div
+                class="bg-[#ff2f59] rounded-xl text-white p-3 md:p-4 flex justify-between items-center relative overflow-hidden shadow-md md:hover:shadow-lg transition-all duration-300 md:hover:-translate-y-1 h-20 md:h-24">
+                <div class="z-10">
+                  <div class="text-[10px] md:text-xs font-semibold uppercase mb-0.5 md:mb-1 opacity-90">Paket Soal</div>
+                  <h4 id="stat-total-paket" class="text-xl md:text-2xl font-bold monospace">0</h4>
+                </div>
+                <i class="fas fa-folder text-4xl md:text-5xl absolute -right-2 -bottom-2 opacity-25 z-0"></i>
+              </div>
+
+              <div
+                class="bg-[#2463e2] rounded-xl text-white p-3 md:p-4 flex justify-between items-center relative overflow-hidden shadow-md md:hover:shadow-lg transition-all duration-300 md:hover:-translate-y-1 h-20 md:h-24">
+                <div class="z-10">
+                  <div class="text-[10px] md:text-xs font-semibold uppercase mb-0.5 md:mb-1 opacity-90">Jadwal Ujian
+                  </div>
+                  <h4 id="stat-total-jadwal" class="text-xl md:text-2xl font-bold monospace">0</h4>
+                </div>
+                <i class="fas fa-calendar-alt text-4xl md:text-5xl absolute -right-2 -bottom-2 opacity-25 z-0"></i>
+              </div>
+
+              <div
+                class="bg-[#ff8928] rounded-xl text-white p-3 md:p-4 flex justify-between items-center relative overflow-hidden shadow-md md:hover:shadow-lg transition-all duration-300 md:hover:-translate-y-1 h-20 md:h-24">
+                <div class="z-10">
+                  <div class="text-[10px] md:text-xs font-semibold uppercase mb-0.5 md:mb-1 opacity-90">Sedang Ujian
+                  </div>
+                  <h4 id="stat-sedang-ujian" class="text-xl md:text-2xl font-bold monospace">0</h4>
+                </div>
+                <i class="fas fa-play-circle text-4xl md:text-5xl absolute -right-2 -bottom-2 opacity-25 z-0"></i>
+              </div>
+
+              <div
+                class="bg-[#67829e] rounded-xl text-white p-3 md:p-4 flex justify-between items-center relative overflow-hidden shadow-md md:hover:shadow-lg transition-all duration-300 md:hover:-translate-y-1 h-20 md:h-24">
+                <div class="z-10">
+                  <div class="text-[10px] md:text-xs font-semibold uppercase mb-0.5 md:mb-1 opacity-90">Sudah Submit
+                  </div>
+                  <h4 id="stat-sudah-submit" class="text-xl md:text-2xl font-bold monospace">0</h4>
+                </div>
+                <i class="fas fa-check-circle text-4xl md:text-5xl absolute -right-2 -bottom-2 opacity-25 z-0"></i>
+              </div>
+
+            </div>
+          </div>
+
+          <div
+            class="glass p-4 sm:p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+            <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-3 mb-4">
+              <div class="flex items-center gap-2">
+                <h3 class="font-extrabold text-[10px] sm:text-xs uppercase tracking-wider text-slate-500">Tabel Jadwal
+                  Ujian Aktif</h3>
+                <span
+                  class="text-[8px] sm:text-[10px] bg-primary/10 text-primary dark:text-accent font-bold px-2 py-0.5 rounded-full uppercase">Sesi
+                  Berjalan</span>
+              </div>
+
+              <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+
+                <div class="relative w-full sm:w-40">
+                  <i data-lucide="school"
+                    class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400"></i>
+                  <select id="filter-dashboard-kelas"
+                    class="w-full pl-8 pr-3 py-1.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl outline-none text-[10px] sm:text-xs font-semibold text-slate-800 dark:text-slate-100 appearance-none focus:ring-2 focus:ring-primary/50">
+                    <option value="">Semua Kelas</option>
+                  </select>
+                </div>
+
+                <div class="relative w-full sm:w-64">
+                  <i data-lucide="search"
+                    class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400"></i>
+                  <input type="text" id="search-dashboard-mapel" placeholder="Cari Mata Pelajaran..."
+                    class="w-full pl-8 pr-3 py-1.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl outline-none text-[10px] sm:text-xs font-semibold text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-primary/50">
+                </div>
+                <div class="relative w-full sm:w-40">
+                  <i data-lucide="list-check"
+                    class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400"></i>
+                  <select id="dashboard-page-size"
+                    class="w-full pl-8 pr-3 py-1.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl outline-none text-[10px] sm:text-xs font-semibold text-slate-800 dark:text-slate-100 appearance-none focus:ring-2 focus:ring-primary/50">
+                    <option value="10">10 Baris</option>
+                    <option value="50">50 Baris</option>
+                    <option value="100">100 Baris</option>
+                    <option value="all">Semua Data</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="overflow-x-auto rounded-xl border border-slate-100 dark:border-slate-800/80">
+              <table class="min-w-full w-full table-auto text-left border-collapse text-xs sm:text-sm">
+                <thead>
+                  <tr
+                    class="bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 text-slate-400 font-extrabold text-[10px] sm:text-xs uppercase tracking-wider">
+                    <th class="py-3 px-4">Hari / Tanggal</th>
+                    <th class="py-3 px-4">Waktu</th>
+                    <th class="py-3 px-4">Mata Pelajaran</th>
+                    <th class="py-3 px-4">Kelas</th>
+                    <th class="py-3 px-4">Status</th>
+                    <th class="py-3 px-4 text-right">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody id="dashboard-active-exams-tbody" class="divide-y divide-slate-100 dark:divide-slate-800/50">
+                  <tr>
+                    <td colspan="6" class="py-8 text-center text-slate-400 font-bold text-xs">Memuat daftar jadwal ujian
+                      aktif...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div id="dashboard-pagination-controls" class="mt-3"></div>
+        </article>
+
+        <article id="view-admin-monitor" class="page-view hidden space-y-4 sm:space-y-6">
+          <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
+            <div>
+              <h1 class="text-sm sm:text-xl md:text-2xl font-black text-primary dark:text-white">Monitoring Siswa Aktif
+              </h1>
+              <p class="text-[9px] sm:text-xs text-slate-500 dark:text-slate-400 font-medium">Melacak progres
+                pengerjaan, sisa waktu, dan status curang secara real-time.</p>
+            </div>
+            <div class="flex flex-wrap items-center gap-2 shrink-0">
+              <button id="btn-refresh-monitor"
+                class="group relative p-1.5 sm:p-2 rounded-xl bg-primary/10 text-primary dark:text-white hover:bg-primary/20 hover:scale-105 active:scale-95 transition-all duration-200 shadow-sm hover:shadow-md"
+                title="Refresh data dari database">
+                <span class="absolute inset-0 rounded-xl bg-primary/10 opacity-0 group-hover:opacity-100 transition duration-200"></span>
+                <i data-lucide="refresh-cw" class="relative w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform duration-500 group-hover:rotate-180"></i>
+              </button>
+              <button id="btn-global-monitor-chat"
+                class="px-3 py-1.5 sm:px-4 sm:py-2 bg-blue-600 hover:bg-blue-700 text-white text-[10px] sm:text-xs font-bold rounded-lg shadow-md transition flex items-center gap-1.5">
+                <i data-lucide="messages-square" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
+                <span id="btn-global-monitor-chat-label">Chat Semua Siswa</span>
+              </button>
+              <button id="btn-reset-all-sessions"
+                class="px-3 py-1.5 sm:px-4 sm:py-2 bg-red-600 hover:bg-red-700 text-white text-[10px] sm:text-xs font-bold rounded-lg shadow-md transition flex items-center gap-1.5">
+                <i data-lucide="rotate-ccw" class="w-3.5 h-3.5 sm:w-4 sm:h-4 animate-none"></i>
+                Reset Semua Sesi Aktif
+              </button>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-4 gap-2 sm:gap-3">
+            <div class="relative">
+              <i data-lucide="search"
+                class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-400"></i>
+              <input type="text" id="filter-monitor-search" placeholder="Cari NIS / Nama..."
+                class="w-full pl-8 pr-3 py-1.5 sm:py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl outline-none text-[10px] sm:text-xs font-semibold">
+            </div>
+            <div class="relative">
+              <i data-lucide="school"
+                class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-400"></i>
+              <select id="filter-monitor-kelas"
+                class="w-full pl-8 pr-3 py-1.5 sm:py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl outline-none text-[10px] sm:text-xs font-semibold appearance-none">
+                <option value="">Semua Kelas</option>
+              </select>
+            </div>
+            <div class="relative">
+              <i data-lucide="shield-alert"
+                class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-400"></i>
+              <select id="filter-monitor-status"
+                class="w-full pl-8 pr-3 py-1.5 sm:py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl outline-none text-[10px] sm:text-xs font-semibold appearance-none">
+                <option value="">Semua Status Sesi</option>
+                <option value="aktif">Sedang Mengerjakan</option>
+                <option value="curang">Terindikasi Curang</option>
+              </select>
+            </div>
+            <div class="relative">
+              <i data-lucide="list-check"
+                class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-400"></i>
+              <select id="monitor-page-size"
+                class="w-full pl-8 pr-3 py-1.5 sm:py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl outline-none text-[10px] sm:text-xs font-semibold appearance-none">
+                <option value="10">10 Baris</option>
+                <option value="50">50 Baris</option>
+                <option value="100">100 Baris</option>
+                <option value="all">Semua Data</option>
+              </select>
+            </div>
+          </div>
+
+          <div
+            class="glass p-4 sm:p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+            <div class="overflow-x-auto rounded-xl border border-slate-100 dark:border-slate-800/80">
+              <table class="min-w-full w-full table-auto text-left border-collapse text-xs sm:text-sm">
+                <thead>
+                  <tr
+                    class="bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 text-slate-400 font-extrabold text-[10px] sm:text-xs uppercase tracking-wider">
+                    <th class="py-3 px-4">NIS</th>
+                    <th class="py-3 px-4">Nama Siswa</th>
+                    <th class="py-3 px-4">Kelas</th>
+                    <th class="py-3 px-4">Mulai</th>
+                    <th class="py-3 px-4">Status</th>
+                    <th class="py-3 px-4 text-right">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody id="monitoring-list-container" class="divide-y divide-slate-100 dark:divide-slate-800/50">
+                  <tr>
+                    <td colspan="6" class="py-8 text-center text-slate-400 font-bold text-xs">Memuat daftar
+                      monitoring...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div id="monitor-pagination-controls" class="mt-3"></div>
+          </div>
+        </article>
+
+        <article id="view-admin-students" class="page-view hidden space-y-4 sm:space-y-6">
+          <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-3">
+            <div>
+              <h1 class="text-sm sm:text-xl md:text-2xl font-black text-primary dark:text-white">Kelola Data Siswa</h1>
+            </div>
+            <div class="flex flex-wrap items-center gap-1.5">
+              <label
+                class="px-3 py-1.5 sm:px-4 sm:py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] sm:text-xs font-bold rounded-lg shadow-md cursor-pointer flex items-center gap-1">
+                <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5"></i> Impor Excel
+                <input type="file" id="excel-import-file" class="hidden" accept=".xlsx, .xls">
+              </label>
+              <button id="btn-download-kartu-ujian"
+                class="px-3 py-1.5 sm:px-4 sm:py-2 bg-red-600 hover:bg-red-700 text-white text-[10px] sm:text-xs font-bold rounded-lg shadow-md flex items-center gap-1">
+                <i data-lucide="printer" class="w-3.5 h-3.5"></i> Kartu Ujian
+              </button>
+              <button id="btn-download-template"
+                class="px-2.5 py-1.5 sm:px-3.5 sm:py-2 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-white text-[10px] sm:text-xs font-bold rounded-lg flex items-center gap-1">
+                <i data-lucide="download" class="w-3.5 h-3.5"></i> Template
+              </button>
+              <button id="btn-add-student-manual"
+                class="px-3 py-1.5 sm:px-4 sm:py-2 bg-primary hover:bg-primary/95 text-white text-[10px] sm:text-xs font-bold rounded-lg shadow-md flex items-center gap-1">
+                <i data-lucide="plus" class="w-3.5 h-3.5"></i> Tambah Siswa
+              </button>
+              <button id="btn-delete-all-students"
+                class="px-3 py-1.5 sm:px-4 sm:py-2 bg-red-600/10 hover:bg-red-600/20 text-red-600 dark:text-red-400 font-bold rounded-lg border border-red-500/20 text-[10px] sm:text-xs flex items-center gap-1">
+                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Hapus Semua
+              </button>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-4 gap-2 sm:gap-3">
+            <div class="relative">
+              <i data-lucide="search"
+                class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-400"></i>
+              <input type="text" id="search-student" placeholder="Cari NIS atau Nama..."
+                class="w-full pl-8 pr-3 py-1.5 sm:py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl outline-none text-[10px] sm:text-xs font-semibold">
+            </div>
+            <div class="relative">
+              <i data-lucide="school"
+                class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-400"></i>
+              <select id="filter-student-class"
+                class="w-full pl-8 pr-3 py-1.5 sm:py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl outline-none text-[10px] sm:text-xs font-semibold appearance-none">
+                <option value="">Semua Kelas</option>
+              </select>
+            </div>
+            <div class="relative">
+              <i data-lucide="list-check"
+                class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-400"></i>
+              <select id="students-page-size"
+                class="w-full pl-8 pr-3 py-1.5 sm:py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl outline-none text-[10px] sm:text-xs font-semibold appearance-none">
+                <option value="10">10 Baris</option>
+                <option value="50">50 Baris</option>
+                <option value="100">100 Baris</option>
+                <option value="all">Semua Data</option>
+              </select>
+            </div>
+            <div class="flex items-center sm:justify-end px-2 text-[10px] sm:text-xs font-bold text-slate-500">
+              Total:&nbsp;<span id="student-count-display"
+                class="text-primary dark:text-accent font-extrabold">0</span>&nbsp;Siswa
+            </div>
+          </div>
+
+          <div
+            class="glass p-4 sm:p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+            <div class="overflow-x-auto rounded-xl border border-slate-100 dark:border-slate-800/80">
+              <table class="min-w-full w-full table-auto text-left border-collapse text-xs sm:text-sm">
+                <thead>
+                  <tr
+                    class="bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 text-slate-400 font-extrabold text-[10px] sm:text-xs uppercase tracking-wider">
+                    <th class="py-3 px-4 w-12 text-center">No</th>
+                    <th class="py-3 px-4">NIS</th>
+                    <th class="py-3 px-4">Nama Siswa</th>
+                    <th class="py-3 px-4">Jenis Kelamin</th>
+                    <th class="py-3 px-4">Kelas</th>
+                    <th class="py-3 px-4">Password</th>
+                    <th class="py-3 px-4 text-right">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody id="students-table-body" class="divide-y divide-slate-100 dark:divide-slate-800/50">
+                  <tr>
+                    <td colspan="7" class="py-8 text-center text-slate-400 font-bold text-xs">Memuat data siswa...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div id="students-pagination-controls" class="mt-3"></div>
+          </div>
+        </article>
+
+        <article id="view-admin-admins" class="page-view hidden space-y-4 sm:space-y-6">
+          <div class="flex flex-row justify-between items-center gap-3">
+            <div>
+              <h1 class="text-sm sm:text-xl md:text-2xl font-black text-primary dark:text-white">Kelola Data Admin</h1>
+              <p class="text-[9px] sm:text-xs text-slate-500 dark:text-slate-400 font-medium">Tambah, edit sandi, dan
+                hapus akun administrator proktor.</p>
+            </div>
+            <button id="btn-add-admin"
+              class="px-3 py-1.5 sm:px-4 sm:py-2 bg-primary hover:bg-primary/95 text-white text-[10px] sm:text-xs font-bold rounded-lg shadow-md flex items-center gap-1 shrink-0">
+              <i data-lucide="plus" class="w-3.5 h-3.5"></i> Tambah Admin
+            </button>
+          </div>
+
+          <div
+            class="glass p-4 sm:p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+            <div class="overflow-x-auto rounded-xl border border-slate-100 dark:border-slate-800/80">
+              <table class="min-w-full w-full table-auto text-left border-collapse text-xs sm:text-sm">
+                <thead>
+                  <tr
+                    class="bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 text-slate-400 font-extrabold text-[10px] sm:text-xs uppercase tracking-wider">
+                    <th class="py-3 px-4 w-12 text-center">No</th>
+                    <th class="py-3 px-4">Username</th>
+                    <th class="py-3 px-4">Password</th>
+                    <th class="py-3 px-4 text-right">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody id="admins-table-body" class="divide-y divide-slate-100 dark:divide-slate-800/50">
+                  <tr>
+                    <td colspan="4" class="py-8 text-center text-slate-400 font-bold text-xs">Memuat data admin...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </article>
+
+        <article id="view-admin-banksoal" class="page-view hidden space-y-4 sm:space-y-6">
+          <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-3">
+            <div>
+              <h1 class="text-sm sm:text-xl md:text-2xl font-black text-primary dark:text-white">Bank Soal</h1>
+            </div>
+          </div>
+
+          <div
+            class="flex flex-wrap gap-2 border border-slate-200 dark:border-slate-800 rounded-2xl bg-white/80 dark:bg-slate-900/80 p-2">
+            <button id="tab-banksoal-create"
+              class="px-4 py-2 rounded-xl bg-primary text-white font-bold text-[10px] sm:text-xs">Buat Soal</button>
+            <button id="tab-banksoal-packets"
+              class="px-4 py-2 rounded-xl bg-white/10 text-slate-500 hover:text-white text-[10px] sm:text-xs">Daftar
+              Soal</button>
+            <button id="tab-banksoal-view"
+              class="px-4 py-2 rounded-xl bg-white/10 text-slate-500 hover:text-white text-[10px] sm:text-xs">Lihat
+              Soal</button>
+          </div>
+
+          <div id="banksoal-tab-create" class="space-y-4">
+
+            <div
+              class="rounded-2xl border border-dashed border-primary/40 bg-primary/5 p-3 text-[9px] sm:text-[10px] text-slate-600 dark:text-slate-300">
+              <div class="flex items-center justify-between gap-2">
+                <div>
+                  <p class="font-bold text-slate-700 dark:text-slate-100">Contoh Format Word</p>
+                  <p class="text-[8px] sm:text-[9px] text-slate-500 dark:text-slate-400">Tekan tombol + untuk melihat
+                    contoh</p>
+                </div>
+                <button id="toggle-word-format" type="button"
+                  class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-900 text-slate-700 dark:text-slate-200 font-bold">+</button>
+              </div>
+              <div id="word-format-content" class="hidden mt-3 space-y-1">
+                <p>1. Perhatikan gambar di bawah ini.!</p>
+                <p><strong>Gambar simpan disini..</strong></p>
+                <p>A) Pilihan A</p>
+                <p>B) Pilihan B</p>
+                <p>C) Pilihan C</p>
+                <p>D) Pilihan D</p>
+                <p>E) Pilihan E</p>
+                <p>Kunci: D</p>
+              </div>
+              <div class="mt-4 flex flex-wrap gap-2 items-center">
+                <label for="docx-import-file"
+                  class="inline-flex px-5 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-2xl shadow-lg text-[10px] sm:text-sm cursor-pointer items-center justify-center gap-2">
+                  <i data-lucide="upload-cloud" class="w-4 h-4"></i>
+                  Upload Soal Word
+                </label>
+                <button id="btn-download-word-template" type="button"
+                  class="inline-flex px-5 py-3 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-white font-bold rounded-2xl shadow-lg text-[10px] sm:text-sm items-center justify-center gap-2">
+                  <i data-lucide="download" class="w-4 h-4"></i>
+                  Download Template
+                </button>
+                <input type="file" id="docx-import-file" class="hidden" accept=".docx">
+              </div>
+              <p class="text-[9px] text-slate-500 dark:text-slate-400 mt-2">Pastikan gambar disisipkan sebagai embed di
+                Word, bukan link. Gunakan file template <strong>template_soal.docx</strong>.</p>
+            </div>
+
+            <div class="glass p-4 sm:p-6 rounded-3xl border shadow-sm space-y-4">
+              <div class="flex flex-col gap-3">
+                <div class="grid grid-cols-1 gap-3">
+                  <div class="relative">
+                    <i data-lucide="layers" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
+                    <select id="manual-question-packet"
+                      class="w-full pl-10 pr-3 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl outline-none text-[10px] sm:text-sm font-semibold text-slate-800 dark:text-slate-100 appearance-none focus:ring-2 focus:ring-primary/50">
+                      <option value="">Pilih Soal</option>
+                      <option value="__new__">Buat Soal Baru</option>
+                    </select>
+                  </div>
+                </div>
+                <div id="new-packet-name-wrapper" class="hidden relative">
+                  <i data-lucide="file-text"
+                    class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
+                  <input type="text" id="manual-new-packet-name" placeholder="Nama Soal"
+                    class="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl outline-none text-[10px] sm:text-sm font-semibold text-slate-800 dark:text-slate-100" />
+                </div>
+
+                <div class="grid grid-cols-1 xl:grid-cols-[1fr_280px] gap-4">
+                  <div>
+                    <label
+                      class="block text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Soal</label>
+                    <div id="manual-question-text" contenteditable="true"
+                      data-placeholder="Tulis soal di sini... Tempel gambar dari clipboard."
+                      class="manual-contenteditable w-full min-h-[7rem] p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl outline-none text-[10px] sm:text-sm font-semibold text-slate-800 dark:text-slate-100 resize-none focus:ring-2 focus:ring-primary/50 overflow-y-auto">
+                    </div>
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-1 gap-3">
+                  <div class="grid grid-cols-1 gap-3">
+                    <div>
+                      <label
+                        class="block text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-500 mb-1 flex items-center gap-1.5"><span>Jawaban
+                          A</span><i data-lucide="image" class="w-3.5 h-3.5 text-slate-400"></i></label>
+                      <div id="manual-option-A" contenteditable="true"
+                        data-placeholder="Tulis jawaban A... Tempel gambar dari clipboard."
+                        class="manual-contenteditable w-full min-h-[3.5rem] p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl outline-none text-[10px] sm:text-sm font-semibold text-slate-800 dark:text-slate-100 resize-none focus:ring-2 focus:ring-primary/50 overflow-y-auto">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="grid grid-cols-1 gap-3">
+                    <div>
+                      <label
+                        class="block text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-500 mb-1 flex items-center gap-1.5"><span>Jawaban
+                          B</span><i data-lucide="image" class="w-3.5 h-3.5 text-slate-400"></i></label>
+                      <div id="manual-option-B" contenteditable="true"
+                        data-placeholder="Tulis jawaban B... Tempel gambar dari clipboard."
+                        class="manual-contenteditable w-full min-h-[3.5rem] p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl outline-none text-[10px] sm:text-sm font-semibold text-slate-800 dark:text-slate-100 resize-none focus:ring-2 focus:ring-primary/50 overflow-y-auto">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="grid grid-cols-1 gap-3">
+                    <div>
+                      <label
+                        class="block text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-500 mb-1 flex items-center gap-1.5"><span>Jawaban
+                          C</span><i data-lucide="image" class="w-3.5 h-3.5 text-slate-400"></i></label>
+                      <div id="manual-option-C" contenteditable="true"
+                        data-placeholder="Tulis jawaban C... Tempel gambar dari clipboard."
+                        class="manual-contenteditable w-full min-h-[3.5rem] p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl outline-none text-[10px] sm:text-sm font-semibold text-slate-800 dark:text-slate-100 resize-none focus:ring-2 focus:ring-primary/50 overflow-y-auto">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="grid grid-cols-1 gap-3">
+                    <div>
+                      <label
+                        class="block text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-500 mb-1 flex items-center gap-1.5"><span>Jawaban
+                          D</span><i data-lucide="image" class="w-3.5 h-3.5 text-slate-400"></i></label>
+                      <div id="manual-option-D" contenteditable="true"
+                        data-placeholder="Tulis jawaban D... Tempel gambar dari clipboard."
+                        class="manual-contenteditable w-full min-h-[3.5rem] p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl outline-none text-[10px] sm:text-sm font-semibold text-slate-800 dark:text-slate-100 resize-none focus:ring-2 focus:ring-primary/50 overflow-y-auto">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="grid grid-cols-1 gap-3">
+                    <div>
+                      <label
+                        class="block text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-500 mb-1 flex items-center gap-1.5"><span>Jawaban
+                          E</span><i data-lucide="image" class="w-3.5 h-3.5 text-slate-400"></i></label>
+                      <div id="manual-option-E" contenteditable="true"
+                        data-placeholder="Tulis jawaban E... Tempel gambar dari clipboard."
+                        class="manual-contenteditable w-full min-h-[3.5rem] p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl outline-none text-[10px] sm:text-sm font-semibold text-slate-800 dark:text-slate-100 resize-none focus:ring-2 focus:ring-primary/50 overflow-y-auto">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-3 border-t border-slate-200 dark:border-slate-700">
+                  <div class="relative">
+                    <i data-lucide="check-circle"
+                      class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
+                    <select id="manual-correct-key"
+                      class="w-full pl-10 pr-3 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl outline-none text-[10px] sm:text-sm font-semibold text-slate-800 dark:text-slate-100 appearance-none focus:ring-2 focus:ring-primary/50">
+                      <option value="A">Kunci Jawaban: A</option>
+                      <option value="B">Kunci Jawaban: B</option>
+                      <option value="C">Kunci Jawaban: C</option>
+                      <option value="D">Kunci Jawaban: D</option>
+                      <option value="E">Kunci Jawaban: E</option>
+                    </select>
+                  </div>
+                  <div class="flex items-center justify-end gap-2">
+                    <button id="btn-clear-manual-question"
+                      class="px-4 py-2.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold rounded-2xl shadow-sm text-[10px] sm:text-sm">Bersihkan</button>
+                    <button id="btn-save-manual-question"
+                      class="px-5 py-2.5 bg-primary hover:bg-primary/95 text-white font-bold rounded-2xl shadow-lg text-[10px] sm:text-sm">Simpan
+                      + Tambah Soal</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <div id="banksoal-tab-packets" class="hidden space-y-4">
+            <div class="glass p-4 sm:p-6 rounded-3xl border shadow-sm space-y-4">
+              <div class="flex items-center justify-between gap-2">
+                <div>
+                  <h3 class="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-500">Daftar Soal</h3>
+                  <p class="text-[9px] sm:text-[10px] text-slate-400">Kelola paket soal di sini.</p>
+                </div>
+                <button id="btn-delete-all-questions"
+                  class="px-3 py-1.5 sm:px-4 sm:py-2 bg-red-600/10 hover:bg-red-600/20 text-red-600 dark:text-red-400 font-bold rounded-lg border border-red-500/20 text-[10px] sm:text-xs flex items-center gap-1">
+                  <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Hapus Semua
+                </button>
+              </div>
+              <div class="overflow-x-auto">
+                <table
+                  class="min-w-full w-full table-auto text-center text-[10px] sm:text-sm border-separate border-spacing-0">
+                  <thead class="bg-slate-100 dark:bg-slate-800 text-slate-500 uppercase text-[8px] sm:text-[10px]">
+                    <tr>
+                      <th class="px-3 py-2 font-semibold">No</th>
+                      <th class="px-3 py-2 font-semibold text-left">Nama Soal</th>
+                      <th class="px-3 py-2 font-semibold">Jumlah Soal</th>
+                      <th class="px-3 py-2 font-semibold text-center">Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody id="packets-cards-container" class="divide-y divide-slate-200 dark:divide-slate-700"></tbody>
+                </table>
+              </div>
+              <div id="packets-pagination-controls" class="mt-3"></div>
+            </div>
+          </div>
+
+          <div id="banksoal-tab-view" class="hidden space-y-4">
+            <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
+              <div class="relative">
+                <i data-lucide="layers" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
+                <select id="filter-banksoal-packet"
+                  class="w-full pl-10 pr-3 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl outline-none text-[10px] sm:text-sm font-semibold text-slate-800 dark:text-slate-100 appearance-none focus:ring-2 focus:ring-primary/50">
+                  <option value="">Semua Paket</option>
+                </select>
+              </div>
+              <div class="relative sm:col-span-2">
+                <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
+                <input id="search-banksoal-question" placeholder="Cari teks soal..."
+                  class="w-full pl-10 pr-3 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl outline-none text-[10px] sm:text-sm font-semibold text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-primary/50" />
+              </div>
+              <div class="relative">
+                <i data-lucide="list-check" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
+                <select id="banksoal-page-size"
+                  class="w-full pl-10 pr-3 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl outline-none text-[10px] sm:text-sm font-semibold text-slate-800 dark:text-slate-100 appearance-none focus:ring-2 focus:ring-primary/50">
+                  <option value="10">10 Kartu</option>
+                  <option value="50">50 Kartu</option>
+                  <option value="100">100 Kartu</option>
+                  <option value="all">Semua Data</option>
+                </select>
+              </div>
+            </div>
+            <div id="banksoal-question-list" class="flex flex-col gap-4"></div>
+            <div id="banksoal-pagination-controls" class="mt-3"></div>
+            <style>
+              #banksoal-question-list .expanded .expanded-content {
+                display: block !important;
+              }
+            </style>
+          </div>
+        </article>
+
+        <article id="view-admin-schedule" class="page-view hidden space-y-4 sm:space-y-6">
+          <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-3">
+            <div>
+              <h1 class="text-sm sm:text-xl md:text-2xl font-black text-primary dark:text-white">Jadwal Ujian &amp;
+                Token</h1>
+            </div>
+            <div class="flex gap-2">
+              <button id="btn-add-schedule"
+                class="px-3 py-1.5 sm:px-4 sm:py-2 bg-primary hover:bg-primary/95 text-white text-[10px] sm:text-xs font-bold rounded-lg shadow-md flex items-center gap-1 self-start">
+                <i data-lucide="calendar-plus" class="w-3.5 h-3.5"></i> Buat Jadwal Baru
+              </button>
+              <button id="btn-delete-all-schedules"
+                class="px-3 py-1.5 sm:px-4 sm:py-2 bg-red-600/10 hover:bg-red-600/20 text-red-600 dark:text-red-400 font-bold rounded-lg border border-red-500/20 text-[10px] sm:text-xs flex items-center gap-1">
+                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Hapus Semua
+              </button>
+            </div>
+          </div>
+
+          <div
+            class="overflow-x-auto animate-in fade-in duration-300 rounded-xl border border-slate-100 dark:border-slate-800/80">
+            <table id="schedules-container"
+              class="min-w-full w-full table-auto text-left text-[10px] sm:text-[11px] md:text-sm text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 rounded-3xl overflow-hidden">
+              <thead
+                class="bg-slate-100 dark:bg-slate-900 uppercase text-[9px] sm:text-[10px] text-slate-500 dark:text-slate-400">
+                <tr>
+                  <th class="px-3 py-3 font-semibold">Hari / Tanggal</th>
+                  <th class="px-3 py-3 font-semibold">Waktu</th>
+                  <th class="px-3 py-3 font-semibold">Mapel</th>
+                  <th class="px-3 py-3 font-semibold">Kelas</th>
+                  <th class="px-3 py-3 font-semibold">Token</th>
+                  <th class="px-3 py-3 font-semibold">Durasi</th>
+                  <th class="px-3 py-3 font-semibold text-right">Aksi</th>
+                </tr>
+              </thead>
+              <tbody class="bg-white dark:bg-slate-900" id="schedules-table-body"></tbody>
+            </table>
+          </div>
+          <div id="schedules-pagination-controls" class="mt-3"></div>
+        </article>
+
+        <article id="view-admin-results" class="page-view hidden space-y-4 sm:space-y-6">
+          <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-3">
+            <div>
+              <h1 class="text-sm sm:text-xl md:text-2xl font-black text-primary dark:text-white">Hasil Ujian Siswa</h1>
+            </div>
+            <div class="flex gap-2 flex-wrap items-center">
+              <select id="filter-export-results-format"
+                class="px-2 py-1.5 sm:px-3 sm:py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg outline-none text-[10px] sm:text-xs font-semibold">
+                <option value="excel">Excel</option>
+                <option value="pdf">PDF</option>
+              </select>
+              <button id="btn-export-results-report"
+                class="px-3 py-1.5 sm:px-4 sm:py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] sm:text-xs font-bold rounded-lg shadow flex items-center gap-1 self-start">
+                <i data-lucide="download" class="w-3.5 h-3.5"></i> Ekspor Hasil Nilai
+              </button>
+              <select id="filter-export-item-analysis-format"
+                class="px-2 py-1.5 sm:px-3 sm:py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg outline-none text-[10px] sm:text-xs font-semibold">
+                <option value="excel">Excel</option>
+                <option value="pdf">PDF</option>
+              </select>
+              <button id="btn-export-item-analysis-report"
+                class="px-3 py-1.5 sm:px-4 sm:py-2 bg-blue-600 hover:bg-blue-700 text-white text-[10px] sm:text-xs font-bold rounded-lg shadow flex items-center gap-1 self-start">
+                <i data-lucide="table-2" class="w-3.5 h-3.5"></i> Ekspor Analisis Butir Soal
+              </button>
+              <button id="btn-delete-exam-answers"
+                class="px-3 py-1.5 sm:px-4 sm:py-2 bg-red-600/10 hover:bg-red-600/20 text-red-600 dark:text-red-400 font-bold rounded-lg border border-red-500/20 text-[10px] sm:text-xs flex items-center gap-1">
+                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Hapus Jawaban
+              </button>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 md:grid-cols-5 gap-2 text-slate-800 dark:text-slate-100">
+            <div class="relative">
+              <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400"></i>
+              <input type="text" id="filter-result-search" placeholder="Cari..."
+                class="w-full pl-8 pr-3 py-1.5 sm:py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl outline-none text-[10px] sm:text-xs font-semibold">
+            </div>
+            <div class="relative">
+              <i data-lucide="school" class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400"></i>
+              <select id="filter-result-kelas"
+                class="w-full pl-8 pr-3 py-1.5 sm:py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl outline-none text-[10px] sm:text-xs font-semibold appearance-none">
+                <option value="">Semua Kelas</option>
+              </select>
+            </div>
+            <div class="relative">
+              <i data-lucide="book" class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400"></i>
+              <select id="filter-result-mapel"
+                class="w-full pl-8 pr-3 py-1.5 sm:py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl outline-none text-[10px] sm:text-xs font-semibold appearance-none">
+                <option value="">Semua Mapel</option>
+              </select>
+            </div>
+            <div class="relative">
+              <i data-lucide="arrow-up-down" class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400"></i>
+              <select id="filter-result-sort"
+                class="w-full pl-8 pr-3 py-1.5 sm:py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl outline-none text-[10px] sm:text-xs font-semibold appearance-none">
+                <option value="kelas-nama">Urut: Kelas & Nama</option>
+                <option value="nilai-desc">Urut: Nilai Tertinggi</option>
+                <option value="nilai-asc">Urut: Nilai Terendah</option>
+                <option value="nama-asc">Urut: Nama (A-Z)</option>
+                <option value="nama-desc">Urut: Nama (Z-A)</option>
+              </select>
+            </div>
+            <div class="relative">
+              <i data-lucide="list-filter"
+                class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400"></i>
+              <select id="result-page-size"
+                class="w-full pl-8 pr-3 py-1.5 sm:py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl outline-none text-[10px] sm:text-xs font-semibold appearance-none">
+                <option value="10">10 Baris</option>
+                <option value="50">50 Baris</option>
+                <option value="100">100 Baris</option>
+                <option value="all">Semua Data</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="overflow-x-auto rounded-xl border border-slate-100 dark:border-slate-800/80">
+            <table id="results-table"
+              class="min-w-full w-full table-auto text-left text-[10px] sm:text-[11px] md:text-sm text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 rounded-3xl overflow-hidden">
+              <thead
+                class="bg-slate-100 dark:bg-slate-900 uppercase text-[9px] sm:text-[10px] text-slate-500 dark:text-slate-400">
+                <tr>
+                  <th class="px-3 py-3 font-semibold">NIS</th>
+                  <th class="px-3 py-3 font-semibold">Nama</th>
+                  <th class="px-3 py-3 font-semibold">Kelas</th>
+                  <th class="px-3 py-3 font-semibold">Mapel</th>
+                  <th class="px-3 py-3 font-semibold">Nilai</th>
+                  <th class="px-3 py-3 font-semibold">Benar/Salah</th>
+                  <th class="px-3 py-3 font-semibold">Waktu Kirim</th>
+                  <th class="px-3 py-3 font-semibold">Penjelasan</th>
+                  <th class="px-3 py-3 font-semibold text-right">Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="results-table-body" class="bg-white dark:bg-slate-900"></tbody>
+            </table>
+          </div>
+          <div id="results-pagination-controls" class="mt-3"></div>
+        </article>
+
+        <article id="view-admin-settings" class="page-view hidden space-y-4 sm:space-y-6">
+
+          <div
+            class="w-full bg-white dark:bg-slate-900 rounded-xl border border-gray-200 dark:border-slate-800 shadow-sm overflow-hidden">
+            <div
+              class="bg-[#7a93a8] text-white text-[11px] md:text-sm font-bold uppercase px-3 md:px-4 py-2.5 md:py-3 flex items-center justify-between">
+              <span class="flex items-center gap-2">
+                <i class="fas fa-sliders-h"></i> Konfigurasi Aplikasi
+              </span>
+            </div>
+
+            <div class="p-4 md:p-6 space-y-4 md:space-y-5">
+              <div>
+                <label
+                  class="block text-[10px] md:text-xs font-bold uppercase text-slate-500 mb-1.5 tracking-wider">Nama
+                  Sekolah</label>
+                <div class="relative rounded-md shadow-sm">
+                  <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                    <i class="fas fa-school text-xs md:text-sm"></i>
+                  </div>
+                  <input type="text" id="input-school-name"
+                    class="block w-full pl-9 pr-3 py-2 md:py-2.5 border border-gray-300 dark:border-slate-800 dark:bg-slate-950 rounded text-[11px] md:text-sm focus:outline-none focus:ring-2 focus:ring-[#7a93a8] focus:border-[#7a93a8] text-slate-800 dark:text-slate-100 transition-colors"
+                    placeholder="Masukkan nama sekolah lengkap...">
+                </div>
+              </div>
+
+              <div>
+                <label
+                  class="block text-[10px] md:text-xs font-bold uppercase text-slate-500 mb-1.5 tracking-wider">Judul
+                  Ujian</label>
+                <div class="relative rounded-md shadow-sm">
+                  <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                    <i class="fas fa-file-signature text-xs md:text-sm"></i>
+                  </div>
+                  <input type="text" id="input-exam-title"
+                    class="block w-full pl-9 pr-3 py-2 md:py-2.5 border border-gray-300 dark:border-slate-800 dark:bg-slate-950 rounded text-[11px] md:text-sm focus:outline-none focus:ring-2 focus:ring-[#7a93a8] focus:border-[#7a93a8] text-slate-800 dark:text-slate-100 transition-colors"
+                    placeholder="Masukkan judul ujian...">
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 pt-1">
+                <div>
+                  <label
+                    class="block text-[10px] md:text-xs font-bold uppercase text-slate-500 mb-1.5 tracking-wider">Link
+                    Logo Sekolah</label>
+                  <div class="relative rounded-md shadow-sm">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                      <i class="fas fa-link text-xs md:text-sm"></i>
+                    </div>
+                    <input type="text" id="input-school-logo"
+                      class="block w-full pl-9 pr-3 py-2 md:py-2.5 border border-gray-300 dark:border-slate-800 dark:bg-slate-950 rounded text-[11px] md:text-sm focus:outline-none focus:ring-2 focus:ring-[#7a93a8] focus:border-[#7a93a8] text-slate-800 dark:text-slate-100 transition-colors"
+                      placeholder="Kode logo (10 karakter) atau URL">
+                  </div>
+                </div>
+
+                <div>
+                  <label
+                    class="block text-[10px] md:text-xs font-bold uppercase text-slate-500 mb-1.5 tracking-wider">Unggah
+                    Logo Sekolah</label>
+                  <div class="flex items-center justify-center w-full">
+                    <label
+                      class="flex flex-col items-center justify-center w-full h-[36px] md:h-[41px] border border-dashed border-gray-300 dark:border-slate-800 rounded cursor-pointer bg-gray-50 dark:bg-slate-950 hover:bg-gray-100 dark:hover:bg-slate-900 transition-colors">
+                      <div class="flex items-center space-x-2 text-gray-500 text-[10px] md:text-xs">
+                        <i class="fas fa-cloud-upload-alt text-[#7a93a8] text-sm md:text-base"></i>
+                        <span class="font-medium">Pilih berkas dari komputer... (simpan otomatis)</span>
+                      </div>
+                      <input type="file" id="input-logo-file" accept="image/*" class="hidden"
+                        onchange="processLocalLogo(event)">
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <div class="pt-4 border-t border-gray-100 dark:border-slate-800 flex flex-wrap gap-2">
+                <button onclick="commitSettings()"
+                  class="w-full md:w-auto bg-[#1b5e32] hover:bg-[#154625] text-white px-5 py-2 md:py-2 rounded text-xs md:text-sm font-bold flex justify-center items-center gap-2 shadow-sm transition-all hover:scale-[1.02] active:scale-95">
+                  <i class="fas fa-save"></i>
+                  Simpan Perubahan
+                </button>
+                <button onclick="resetSettingsToDefault()" type="button"
+                  class="w-full md:w-auto bg-slate-500 hover:bg-slate-600 text-white px-5 py-2 md:py-2 rounded text-xs md:text-sm font-bold flex justify-center items-center gap-2 shadow-sm transition-all hover:scale-[1.02] active:scale-95">
+                  <i class="fas fa-undo"></i>
+                  Reset Default
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 text-[10px] sm:text-xs">
+
+            <div
+              class="glass bg-white dark:bg-slate-900 p-4 sm:p-6 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-3 sm:space-y-4 shadow-sm">
+              <div class="flex items-center gap-2 sm:gap-3">
+                <div class="p-2 bg-amber-500/10 text-amber-500 rounded-xl">
+                  <i data-lucide="database" class="w-4 h-4 sm:w-5 sm:h-5"></i>
+                </div>
+                <div>
+                  <h3 class="font-extrabold text-xs sm:text-sm text-slate-700 dark:text-white">Kapasitas Database</h3>
+                </div>
+              </div>
+              <div class="space-y-2.5 pt-1">
+                <div class="flex justify-between text-[11px] font-semibold text-slate-500 dark:text-slate-400">
+                  <span>Terpakai:</span>
+                  <span id="db-used-text" class="font-bold text-slate-800 dark:text-slate-100">0.00 KB</span>
+                </div>
+                <div class="flex justify-between text-[11px] font-semibold text-slate-500 dark:text-slate-400">
+                  <span>Sisa:</span>
+                  <span id="db-free-text" class="font-bold text-slate-800 dark:text-slate-100">500.00 MB</span>
+                </div>
+
+                <div class="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-2">
+                  <div id="db-progress-bar" class="bg-primary h-2 rounded-full transition-all duration-500"
+                    style="width: 0%"></div>
+                </div>
+                <div class="text-[9px] text-slate-450 dark:text-slate-400 text-right font-medium">Kapasitas Maksimal:
+                  500 MB</div>
+              </div>
+            </div>
+
+            <div
+              class="glass bg-white dark:bg-slate-900 p-4 sm:p-6 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-3 sm:space-y-4 shadow-sm">
+              <div class="flex items-center gap-2 sm:gap-3">
+                <div class="p-2 bg-blue-500/10 text-blue-500 rounded-xl"><i data-lucide="archive"
+                    class="w-4 h-4 sm:w-5 sm:h-5"></i></div>
+                <div>
+                  <h3 class="font-extrabold text-xs sm:text-sm text-slate-700 dark:text-white">Ekspor / Impor Backup
+                    Sistem</h3>
+                </div>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+                <button id="btn-export-database"
+                  class="w-full py-2 sm:py-3 bg-primary hover:bg-primary/95 text-white font-bold rounded-xl shadow flex items-center justify-center gap-1">
+                  <i data-lucide="download-cloud" class="w-3.5 h-3.5"></i> Ekspor Backup
+                </button>
+                <label
+                  class="w-full py-2 sm:py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow cursor-pointer text-center flex items-center justify-center gap-1">
+                  <i data-lucide="upload-cloud" class="w-3.5 h-3.5"></i> Impor Restore
+                  <input type="file" id="import-database-file" class="hidden" accept=".json">
+                </label>
+              </div>
+            </div>
+            <div
+              class="glass bg-white dark:bg-slate-900 p-4 sm:p-6 rounded-3xl border border-red-200 dark:border-red-950/40 bg-red-500/5 space-y-3 sm:space-y-4 shadow-sm">
+              <div class="flex items-center gap-2 sm:gap-3">
+                <div class="p-2 bg-red-500/15 text-red-500 rounded-xl"><i data-lucide="alert-octagon"
+                    class="w-4 h-4 sm:w-5 sm:h-5"></i></div>
+                <div>
+                  <h3 class="font-extrabold text-xs sm:text-sm text-red-600 dark:text-red-400">Pembersihan Semua Data
+                  </h3>
+                  <p class="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
+                    Menghapus siswa, bank soal, jadwal, sesi ujian, dan jawaban. Tabel <strong>Admin</strong> dan <strong>Pengaturan</strong> di database tidak dihapus.
+                  </p>
+                </div>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-1 gap-2 pt-1">
+                <button id="btn-purge-database"
+                  class="w-full py-2 sm:py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl shadow text-[10px] sm:text-xs">Hapus
+                  Semua Data</button>
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="w-full bg-white dark:bg-slate-900 rounded-xl border border-gray-200 dark:border-slate-800 shadow-sm overflow-hidden mt-4 sm:mt-6">
+            <div class="p-5 md:p-6 space-y-4">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-teal-800 text-white flex items-center justify-center">
+                  <i class="fas fa-database text-lg"></i>
+                </div>
+                <div>
+                  <h3 class="font-extrabold text-sm md:text-base text-slate-700 dark:text-white">Konfigurasi Database</h3>
+                  <p class="text-xs text-slate-500 dark:text-slate-400">URL dan anon key Supabase disimpan/diupdate di tabel app_settings. Reset mengembalikan nilai default awal.</p>
+                </div>
+              </div>
+
+              <div class="space-y-3">
+                <div>
+                  <label class="block text-[10px] md:text-xs font-bold uppercase text-slate-500 mb-1 tracking-wider">Supabase URL</label>
+                  <input type="text" id="db-supabase-url"
+                    class="block w-full px-3 py-2 border border-gray-300 dark:border-slate-800 dark:bg-slate-950 rounded text-xs md:text-sm focus:outline-none focus:ring-2 focus:ring-[#7a93a8] text-slate-800 dark:text-slate-100 transition-colors"
+                    placeholder="https://xxx.supabase.co">
+                </div>
+
+                <div>
+                  <label class="block text-[10px] md:text-xs font-bold uppercase text-slate-500 mb-1 tracking-wider">Anon Key</label>
+                  <textarea id="db-supabase-key" rows="2"
+                    class="block w-full px-3 py-2 border border-gray-300 dark:border-slate-800 dark:bg-slate-950 rounded text-xs md:text-sm focus:outline-none focus:ring-2 focus:ring-[#7a93a8] text-slate-800 dark:text-slate-100 transition-colors font-mono"
+                    placeholder="eyJhbGciOi..."></textarea>
+                </div>
+
+                <div class="text-[11px] font-semibold text-slate-500 dark:text-slate-400">
+                  Status: <span id="db-config-status" class="text-slate-800 dark:text-slate-200">Memuat status...</span>
+                </div>
+
+                <div class="pt-2 flex flex-wrap gap-2">
+                  <button onclick="testDatabaseConnection()" type="button"
+                    class="bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 px-4 py-2 rounded text-xs font-bold flex items-center gap-1.5 transition active:scale-95">
+                    <i class="fas fa-plug"></i> Uji Koneksi
+                  </button>
+                  <button onclick="resetDatabaseConfig()" type="button"
+                    class="bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 px-4 py-2 rounded text-xs font-bold flex items-center gap-1.5 transition active:scale-95">
+                    <i class="fas fa-undo"></i> Reset Default
+                  </button>
+                  <button onclick="saveDatabaseConfigToCloud()" type="button"
+                    class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-xs font-bold flex items-center gap-1.5 shadow-sm transition active:scale-95">
+                    <i class="fas fa-save"></i> Simpan ke Database
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <footer id="admin-content-footer"
+          class="mt-6 sm:mt-8 pt-4 pb-6 sm:pb-8 border-t border-slate-200/70 dark:border-slate-700/60">
+          <p id="footer-copyright-text"
+            class="text-[9px] sm:text-[10px] md:text-xs text-slate-400 dark:text-slate-500 font-semibold tracking-wide text-center">
+            &copy; 2026 Computer Based Test | Developed By arnnon
+          </p>
+        </footer>
+
+      </main>
+
+    </div>
+
+    <button type="button" id="btn-admin-portrait-refresh"
+      class="admin-portrait-refresh-btn hidden"
+      title="Muat ulang tampilan"
+      aria-label="Muat ulang tampilan">
+      <i class="fas fa-sync-alt" aria-hidden="true"></i>
+      <span>Muat ulang</span>
+    </button>
+  </div>
+
+  <div id="result-item-analysis-modal" class="hidden">
+    <div class="item-analysis-backdrop" onclick="closeResultItemAnalysis()"></div>
+    <div class="item-analysis-panel">
+      <div class="item-analysis-header">
+        <div>
+          <p class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-400">Analisis Butir Soal</p>
+          <h3 id="item-analysis-title" class="text-base sm:text-lg font-black text-slate-800 dark:text-slate-100 mt-1">Detail Hasil Ujian</h3>
+          <p id="item-analysis-subtitle" class="text-[11px] sm:text-sm text-slate-500 dark:text-slate-400 mt-1"></p>
+        </div>
+        <button type="button" onclick="closeResultItemAnalysis()"
+          class="shrink-0 w-9 h-9 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-700 dark:hover:text-slate-200 flex items-center justify-center">
+          <span class="text-xl">❌</span>
+        </button>
+      </div>
+      <div class="item-analysis-body">
+        <div id="item-analysis-summary" class="item-analysis-summary"></div>
+        <div class="overflow-x-auto rounded-xl border border-slate-100 dark:border-slate-800">
+          <table class="item-analysis-table">
+            <thead>
+              <tr>
+                <th class="text-left w-12">No</th>
+                <th class="text-center">Butir Soal</th>
+                <th class="text-center w-20">Jawaban</th>
+                <th class="text-center w-20">Kunci</th>
+                <th class="text-center w-24">Status</th>
+              </tr>
+            </thead>
+            <tbody id="item-analysis-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="item-analysis-footer">
+        <button type="button" onclick="downloadCurrentItemAnalysisPdf()"
+          class="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-bold transition">
+          <span class="text-base">⬇️</span>
+          Download PDF
+        </button>
+        <button type="button" onclick="closeResultItemAnalysis()"
+          class="px-4 py-2 rounded-xl bg-primary text-white text-xs sm:text-sm font-bold">Tutup</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast-container" class="fixed bottom-4 right-4 z-[80] flex flex-col items-end gap-2 w-[min(92vw,24rem)] pointer-events-none"></div>
+
+  <div id="confirmation-dialog" class="hidden">
+    <div class="confirmation-dialog-panel shadow-2xl relative border animate-in fade-in duration-150">
+      <div id="dialog-warning-icon" class="hidden warning-alert-icon-stack" aria-hidden="true">
+        <svg class="warning-alert-icon-svg" viewBox="0 0 88 88" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M44 7.5L79.5 73.5H8.5L44 7.5Z" fill="#FACC15" stroke="#CA8A04" stroke-width="2.5" stroke-linejoin="round"/>
+          <g class="warning-alert-icon-exclamation">
+            <rect x="39.5" y="27" width="9" height="30" rx="4.5" fill="#DC2626"/>
+            <circle cx="44" cy="67.5" r="5.5" fill="#DC2626"/>
+          </g>
+        </svg>
+      </div>
+      <div class="confirmation-dialog-header">
+        <div id="dialog-icon-wrapper" class="bg-primary/10 text-primary">
+          <i id="dialog-icon" data-lucide="help-circle"></i>
+        </div>
+        <h3 id="dialog-title" class="font-black">Konfirmasi</h3>
+      </div>
+      <p id="dialog-message" class="font-semibold"></p>
+      <div class="confirmation-dialog-actions">
+        <button type="button" id="dialog-btn-cancel"
+          class="bg-slate-200/90 dark:bg-slate-800/90 text-slate-700 dark:text-slate-200 transition hover:bg-slate-300 dark:hover:bg-slate-700">Batal</button>
+        <button type="button" id="dialog-btn-confirm"
+          class="bg-primary text-white transition">Lanjutkan</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="global-spinner"
+    class="hidden fixed inset-0 z-[100] flex flex-col justify-center items-center bg-slate-950/60 backdrop-blur-md">
+    <div class="relative w-12 h-12 sm:w-16 sm:h-16 mb-3 sm:mb-4">
+      <div class="absolute inset-0 rounded-full border-4 border-slate-800 border-t-accent animate-spin"></div>
+    </div>
+    <span id="global-spinner-text"
+      class="text-[8px] sm:text-[10px] font-extrabold tracking-widest text-slate-300 uppercase">Mengolah...</span>
+  </div>
+
+  <script src="js/admin/state.js"></script>
+  <script src="js/admin/router.js"></script>
+  <script src="js/admin/auth.js"></script>
+  <script src="js/admin/realtime.js"></script>
+  <script src="js/admin/students.js"></script>
+  <script src="js/admin/monitor.js"></script>
+  <script src="js/admin/schedules.js"></script>
+  <script src="js/admin/packets.js"></script>
+  <script src="js/admin/banksoal.js"></script>
+  <script src="js/admin/results.js"></script>
+  <script src="js/admin/dashboard.js"></script>
+  <script src="js/admin/triggers.js"></script>
+  <script src="js/admin/database.js"></script>
+  <script src="js/admin/export.js"></script>
+  <script src="js/admin/import.js"></script>
+  <script src="js/admin/forms.js"></script>
+  <script src="js/admin/init.js"></script>
+</body>
+
+</html>

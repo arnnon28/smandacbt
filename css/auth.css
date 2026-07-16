@@ -1,0 +1,184 @@
+#auth-view,
+#auth-view *,
+#admin-auth-modal,
+#admin-auth-modal * {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+#auth-view::-webkit-scrollbar,
+#auth-view *::-webkit-scrollbar,
+#admin-auth-modal::-webkit-scrollbar,
+#admin-auth-modal *::-webkit-scrollbar {
+  display: none !important;
+}
+
+.auth-login-status-panel {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 0.625rem 0.75rem;
+  border-radius: 1rem;
+  border: 1px solid transparent;
+}
+
+.auth-login-status-icon {
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+  margin-top: 0.125rem;
+}
+
+.auth-login-status-title {
+  font-size: clamp(0.625rem, 2.5vw, 0.75rem);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  line-height: 1.35;
+}
+
+.auth-login-status-message {
+  font-size: clamp(0.625rem, 2.5vw, 0.75rem);
+  font-weight: 600;
+  line-height: 1.5;
+  margin-top: 0.125rem;
+}
+
+.auth-login-status--error {
+  background-color: #fef2f2;
+  border-color: #fecaca;
+}
+
+.auth-login-status-title--error { color: #b91c1c; }
+.auth-login-status-message--error { color: #dc2626; }
+.auth-login-status-icon--error { color: #ef4444; }
+
+.dark .auth-login-status--error {
+  background-color: rgba(69, 10, 10, 0.35);
+  border-color: rgba(127, 29, 29, 0.55);
+}
+
+.dark .auth-login-status-title--error { color: #fca5a5; }
+.dark .auth-login-status-message--error { color: #f87171; }
+.dark .auth-login-status-icon--error { color: #f87171; }
+
+.auth-login-status--warning {
+  background-color: #fffbeb;
+  border-color: #fcd34d;
+}
+
+.auth-login-status-title--warning { color: #92400e; }
+.auth-login-status-message--warning { color: #b45309; }
+.auth-login-status-icon--warning { color: #f59e0b; }
+
+.dark .auth-login-status--warning {
+  background-color: rgba(69, 26, 3, 0.35);
+  border-color: rgba(146, 64, 14, 0.55);
+}
+
+.dark .auth-login-status-title--warning { color: #fcd34d; }
+.dark .auth-login-status-message--warning { color: #fbbf24; }
+.dark .auth-login-status-icon--warning { color: #fbbf24; }
+
+.auth-login-status--info {
+  background-color: #eff6ff;
+  border-color: #bfdbfe;
+}
+
+.auth-login-status-title--info { color: #1e40af; }
+.auth-login-status-message--info { color: #1d4ed8; }
+.auth-login-status-icon--info { color: #3b82f6; }
+
+.dark .auth-login-status--info {
+  background-color: rgba(23, 37, 84, 0.35);
+  border-color: rgba(30, 64, 175, 0.55);
+}
+
+.dark .auth-login-status-title--info { color: #93c5fd; }
+.dark .auth-login-status-message--info { color: #60a5fa; }
+.dark .auth-login-status-icon--info { color: #60a5fa; }
+
+.auth-login-status--gray {
+  background-color: #f1f5f9;
+  border-color: #cbd5e1;
+}
+
+.auth-login-status-title--gray { color: #334155; }
+.auth-login-status-message--gray { color: #475569; }
+.auth-login-status-icon--gray { color: #64748b; }
+
+.dark .auth-login-status--gray {
+  background-color: rgba(30, 41, 59, 0.65);
+  border-color: rgba(71, 85, 105, 0.65);
+}
+
+.dark .auth-login-status-title--gray { color: #e2e8f0; }
+.dark .auth-login-status-message--gray { color: #cbd5e1; }
+.dark .auth-login-status-icon--gray { color: #94a3b8; }
+
+#admin-auth-modal {
+  background: transparent !important;
+  background-color: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+#admin-auth-modal > div {
+  background: #ffffff !important;
+  border-color: #e2e8f0 !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.dark #admin-auth-modal > div {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+}
+
+#admin-auth-modal h3,
+#admin-auth-modal label {
+  color: #0f172a;
+}
+
+#admin-auth-modal input,
+#admin-auth-modal textarea,
+#admin-auth-modal select {
+  font-size: 1.05rem !important;
+  line-height: 1.8 !important;
+  min-height: 3.5rem !important;
+  height: 3.5rem !important;
+  padding-block: 1rem !important;
+}
+
+#admin-auth-modal .input-icon,
+#admin-auth-modal .toggle-password-icon {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  line-height: 1;
+  pointer-events: none;
+}
+
+#admin-auth-modal .input-icon {
+  left: 0.85rem;
+  color: #64748b;
+}
+
+#admin-auth-modal .toggle-password-icon {
+  right: 0.85rem;
+  pointer-events: auto;
+}
+
+#admin-auth-modal form > div {
+  margin-bottom: 1rem !important;
+}
+
+#admin-auth-modal input::placeholder,
+#admin-auth-modal textarea::placeholder {
+  font-size: 1rem !important;
+}
+
+.dark #admin-auth-modal h3,
+.dark #admin-auth-modal label {
+  color: #f8fafc;
+}

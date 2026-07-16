@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+    try {
+      if (localStorage.getItem('cbt-dark-mode') === 'true') document.documentElement.classList.add('dark');
+      else document.documentElement.classList.remove('dark');
+    } catch (_) {}
+  </script>
+  <title>ARCBT SMAN 2 Kuningan</title>
+  <link rel="icon" type="image/png" href="https://iili.io/KSdduPR.png">
+
+  <script src="js/config.js"></script>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#234198',
+            accent: '#F59E0B',
+            darkBg: '#0F172A',
+            darkPanel: '#1E293B',
+            lightBg: '#F7F8FC'
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace']
+          }
+        }
+      }
+    }
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap"
+    rel="stylesheet">
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/exam.css">
+  <link rel="stylesheet" href="css/auth.css">
+
+  <script src="js/core/storage-supabase.js"></script>
+  <script src="js/ui/dialogs.js"></script>
+  <script src="js/shared/media-settings.js"></script>
+  <script src="js/ui/admin-fit.js"></script>
+  <script src="js/ui/theme.js"></script>
+  <script src="js/exam/progress.js"></script>
+  <script src="js/auth/student.js"></script>
+  <script src="js/core/exports.js"></script>
+</head>
+
+<body
+  class="bg-lightBg dark:bg-darkBg text-slate-800 dark:text-slate-100 min-h-screen flex flex-col">
+
+  <div id="auth-view" class="min-h-screen w-full flex flex-col justify-center items-center grid-bg relative overflow-hidden pt-[60px] pb-[60px]">
+
+    <header
+      class="fixed top-0 left-0 right-0 w-full bg-primary text-white py-2 px-3 sm:px-4 md:px-8 flex justify-between items-center gap-2 shadow-md z-30 shrink-0">
+      <div class="flex items-center gap-2 sm:gap-2.5 flex-1 min-w-0 pr-1">
+        <img id="school-logo-auth" src="https://iili.io/KSdduPR.png" alt="Logo Sekolah"
+          class="w-8 h-8 flex-shrink-0 object-contain rounded-full shadow border border-white/20"
+          onerror="this.src='https://placehold.co/100?text=LOGO'">
+        <div id="header-text-container" class="flex flex-col justify-center min-w-0 flex-1 overflow-hidden">
+          <h1 id="header-school-name" class="font-bold tracking-wide uppercase leading-tight mb-0.5">SMA NEGERI 2 KUNINGAN</h1>
+          <p id="header-exam-title" class="text-slate-300 leading-tight">Asesmen Sumatif Akhir Tahun</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-1.5 flex-shrink-0 bg-transparent text-white">
+        <i data-lucide="clock" class="w-3.5 h-3.5 text-accent animate-pulse"></i>
+        <span id="digital-clock-auth"
+          class="monospace text-[10px] sm:text-xs font-bold text-white tracking-widest">00:00:00</span>
+      </div>
+    </header>
+
+    <main id="student-login-panel" class="w-full max-w-md sm:max-w-lg mx-auto p-4 z-10 flex justify-center items-center">
+      <div
+        class="bg-white/95 dark:bg-slate-900/95 backdrop-blur-md w-full rounded-3xl shadow-[0_20px_50px_rgba(35,65,152,0.25)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-slate-200/55 dark:border-slate-800/80 relative transition-all duration-300 hover:shadow-[0_25px_60px_rgba(35,65,152,0.35)] dark:hover:shadow-[0_25px_60px_rgba(245,158,11,0.15)] overflow-hidden">
+
+        <div class="absolute top-0 left-0 w-full h-1.5 bg-accent rounded-t-3xl"></div>
+
+        <div
+          class="absolute -top-10 -right-10 w-24 h-24 bg-slate-100 dark:bg-slate-800 rounded-full opacity-40 pointer-events-none">
+        </div>
+
+        <div class="p-6 sm:p-9 relative z-10">
+          <div class="text-center mb-5 flex flex-col items-center">
+            <h2 class="text-lg sm:text-2xl font-black text-primary dark:text-accent tracking-wide uppercase mt-1">
+              LOGIN PESERTA</h2>
+            <p class="text-[11px] sm:text-sm text-slate-400 mt-1">Siapkan NIS, Password, dan Token Kalian</p>
+          </div>
+
+          <form id="student-login-form" class="space-y-4">
+            <div>
+              <label
+                class="block text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">
+                Nomor Induk Siswa ( NIS )
+              </label>
+              <div class="relative">
+                <i data-lucide="user" class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
+                <input type="text" id="login-nis" required placeholder="Contoh: 2526100123"
+                  class="w-full pl-10 pr-4 py-2.5 sm:py-3 bg-slate-50/50 dark:bg-slate-950/50 border border-slate-200 dark:border-slate-800 rounded-2xl focus:ring-2 focus:ring-primary/50 outline-none transition text-xs sm:text-sm font-semibold tracking-wide text-slate-800 dark:text-slate-100">
+              </div>
+            </div>
+
+            <div>
+              <label
+                class="block text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">
+                Password
+              </label>
+              <div class="relative">
+                <i data-lucide="lock" class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
+                <input type="password" id="login-password" required placeholder="••••••••"
+                  class="w-full pl-10 pr-10 py-2.5 sm:py-3 bg-slate-50/50 dark:bg-slate-950/50 border border-slate-200 dark:border-slate-800 rounded-2xl focus:ring-2 focus:ring-primary/50 outline-none transition text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-100">
+                <button type="button" id="toggle-auth-password"
+                  class="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                  <i data-lucide="eye" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
+                </button>
+              </div>
+            </div>
+
+            <div>
+              <label
+                class="block text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">
+                Token
+              </label>
+              <div class="relative">
+                <i data-lucide="ticket" class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
+                <input type="text" id="login-token" required placeholder="Contoh: AR2026"
+                  class="w-full pl-10 pr-4 py-2.5 sm:py-3 bg-slate-50/50 dark:bg-slate-950/50 border border-slate-200 dark:border-slate-800 rounded-2xl focus:ring-2 focus:ring-primary/50 outline-none transition text-xs sm:text-sm monospace font-bold tracking-widest uppercase text-slate-800 dark:text-slate-100">
+              </div>
+            </div>
+
+            <div id="auth-login-status"
+              class="hidden auth-login-status-panel auth-login-status--error">
+              <i id="auth-status-icon" data-lucide="info" class="auth-login-status-icon auth-login-status-icon--error"></i>
+              <div class="min-w-0">
+                <p id="auth-status-title"
+                  class="auth-login-status-title auth-login-status-title--error"></p>
+                <p id="auth-status-message"
+                  class="auth-login-status-message auth-login-status-message--error"></p>
+              </div>
+            </div>
+
+            <button type="submit" id="btn-login-submit"
+              class="w-full py-3 bg-primary hover:bg-primary/95 text-white font-bold rounded-2xl shadow-lg flex justify-center items-center gap-1.5 transition text-xs sm:text-sm">
+              <span>Mulai Ujian</span>
+              <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+            </button>
+          </form>
+        </div>
+      </div>
+    </main>
+
+    <footer
+      class="fixed bottom-0 left-0 right-0 w-full bg-primary text-white py-2.5 sm:py-3 px-4 md:px-8 flex justify-between items-center z-30 shadow-inner">
+      <button id="toggle-theme-auth" class="text-white hover:text-slate-200 transition">
+        <i data-lucide="moon" class="w-4 h-4 sm:w-5 sm:h-5 block dark:hidden"></i>
+        <i data-lucide="sun" class="w-4 h-4 sm:w-5 sm:h-5 hidden dark:block"></i>
+      </button>
+      <p id="footer-copyright-text" class="text-[8px] sm:text-[10px] md:text-xs text-slate-300 font-semibold tracking-wide text-center">
+        &copy; 2026 Computer Based Test | Developed By arnnon
+      </p>
+      <button id="btn-trigger-admin-modal" class="text-white hover:text-accent transition"
+        title="Kunci Rahasia Administrator">
+        <i data-lucide="lock" class="w-4 h-4 sm:w-5 sm:h-5"></i>
+      </button>
+    </footer>
+  </div>
+
+  <div id="admin-auth-modal"
+    class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/40">
+    <div
+      class="glass w-full max-w-md md:max-w-lg max-h-[90vh] overflow-y-auto rounded-3xl p-6 sm:p-8 shadow-2xl relative border border-white/20 animate-in fade-in zoom-in-95 duration-200">
+      <div class="absolute top-0 left-0 w-full h-1.5 bg-red-600"></div>
+
+      <div class="flex justify-between items-start mb-5">
+        <div class="flex items-center gap-3">
+          <span class="text-2xl sm:text-[1.4rem] text-red-600 dark:text-red-500 animate-pulse">🛡️</span>
+          <h3 class="font-black text-sm sm:text-base md:text-lg tracking-tight">Login
+            Admin</h3>
+        </div>
+        <button id="btn-close-admin-modal" class="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+          <span class="text-xl sm:text-2xl text-slate-500">❌</span>
+        </button>
+      </div>
+
+      <form id="admin-login-form" class="space-y-4 sm:space-y-5">
+        <div>
+          <label
+            class="block text-xs sm:text-sm font-black uppercase tracking-wider mb-1.5">Username</label>
+          <div class="relative">
+            <span class="input-icon absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-lg sm:text-xl">👤</span>
+            <input type="text" id="admin-username" required placeholder="arnnon"
+              class="w-full pl-10 sm:pl-12 pr-4 py-2.5 sm:py-3 bg-white/85 dark:bg-slate-950/85 border border-slate-250 dark:border-slate-800 rounded-xl outline-none transition text-xs sm:text-sm md:text-base font-semibold text-slate-900 dark:text-slate-100">
+          </div>
+        </div>
+
+        <div>
+          <label
+            class="block text-xs sm:text-sm font-black uppercase tracking-wider mb-1.5">Password</label>
+          <div class="relative">
+            <span class="input-icon absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-lg sm:text-xl">🔒</span>
+            <input type="password" id="admin-password" required placeholder="••••••••"
+              class="w-full pl-10 sm:pl-12 pr-10 sm:pr-12 py-2.5 sm:py-3 bg-white/85 dark:bg-slate-950/85 border border-slate-250 dark:border-slate-800 rounded-xl outline-none transition text-xs sm:text-sm md:text-base font-semibold text-slate-900 dark:text-slate-100">
+            <button type="button" id="toggle-admin-password"
+              class="toggle-password-icon absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+              <span class="text-lg sm:text-xl">👁️</span>
+            </button>
+          </div>
+        </div>
+
+        <div id="admin-error-banner"
+          class="hidden p-3 sm:p-4 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900 rounded-xl flex items-start gap-2.5 text-xs sm:text-sm text-red-600 dark:text-red-400 font-semibold leading-relaxed">
+          <span class="text-base sm:text-lg mt-0.5">⚠️</span>
+          <span id="admin-error-message">Password atau Username Admin Salah</span>
+        </div>
+
+        <button type="submit"
+          class="w-full py-3 sm:py-3.5 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl shadow-lg flex justify-center items-center gap-2 transition text-xs sm:text-sm md:text-base">
+          <span class="text-base sm:text-lg">✅</span>
+          <span>Masuk</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <div id="confirmation-dialog" class="hidden">
+    <div class="confirmation-dialog-panel shadow-2xl relative border animate-in fade-in duration-150">
+      <div class="confirmation-dialog-header">
+        <div id="dialog-icon-wrapper" class="bg-primary/10 text-primary">
+          <span id="dialog-icon" class="text-3xl">❓</span>
+        </div>
+        <h3 id="dialog-title" class="font-black">Konfirmasi</h3>
+      </div>
+      <p id="dialog-message" class="font-semibold"></p>
+      <div class="confirmation-dialog-actions">
+        <button id="dialog-btn-cancel"
+          class="bg-slate-200/90 dark:bg-slate-800/90 text-slate-700 dark:text-slate-200 transition hover:bg-slate-300 dark:hover:bg-slate-700">Batal</button>
+        <button id="dialog-btn-confirm"
+          class="bg-primary text-white transition">Lanjutkan</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="global-spinner"
+    class="hidden fixed inset-0 z-[100] flex flex-col justify-center items-center bg-slate-950/60 backdrop-blur-md">
+    <div class="relative w-12 h-12 sm:w-16 sm:h-16 mb-3 sm:mb-4">
+      <div class="absolute inset-0 rounded-full border-4 border-slate-800 border-t-accent animate-spin"></div>
+    </div>
+    <span id="global-spinner-text"
+      class="text-[8px] sm:text-[10px] font-extrabold tracking-widest text-slate-300 uppercase">Mengolah...</span>
+  </div>
+
+  <script type="module">
+    let studentLoginInFlight = false;
+    let adminLoginInFlight = false;
+
+    function checkSavedSession() {
+      const sessionStr = mySessionStorage.getItem('cbt-session');
+      if (sessionStr) {
+        try {
+          const user = JSON.parse(sessionStr);
+          if (user.role === 'admin') {
+            window.location.href = 'admin.html';
+          } else if (user.role === 'student') {
+            window.location.href = 'ujian.html';
+          }
+        } catch (err) {
+          mySessionStorage.removeItem('cbt-session');
+        }
+      }
+    }
+
+    async function handleStudentLogin(e) {
+      e.preventDefault();
+      if (studentLoginInFlight) return;
+      studentLoginInFlight = true;
+      try {
+        const nisEl = document.getElementById('login-nis');
+        const pwEl = document.getElementById('login-password');
+        const tokenEl = document.getElementById('login-token');
+        if (!nisEl || !pwEl || !tokenEl) {
+          throw new Error('Form login tidak siap. Muat ulang halaman.');
+        }
+
+        const nis = nisEl.value.trim();
+        const password = pwEl.value;
+        const token = tokenEl.value.trim().toUpperCase();
+
+        if (typeof hideAuthLoginStatus === 'function') hideAuthLoginStatus();
+        toggleLoader(true, "MEMVERIFIKASI...");
+
+        if (typeof verifyStudentLoginCredentials !== 'function') {
+          throw new Error('Modul validasi login tidak tersedia.');
+        }
+
+        const result = await verifyStudentLoginCredentials({ nis, password, token });
+        if (!result.ok) {
+          if (typeof showAuthLoginStatus === 'function') showAuthLoginStatus(result);
+          return;
+        }
+
+        const {
+          schedule,
+          scheduleId,
+          student: st,
+          token: trimmedToken,
+          isResume,
+          resumeProgress
+        } = result;
+
+        if (!schedule?.id_paket || !scheduleId || !st?.nis) {
+          throw new Error('Respons login tidak lengkap. Coba lagi atau hubungi proktor.');
+        }
+
+        if (isResume) {
+          mySessionStorage.setItem('cbt-resume-exam', '1');
+        } else {
+          mySessionStorage.removeItem('cbt-resume-exam');
+        }
+
+        const userObj = {
+          nis: st.nis,
+          nama: st.nama,
+          kelas: st.kelas,
+          role: 'student',
+          activeScheduleId: scheduleId,
+          activePacketId: schedule.id_paket,
+          token: trimmedToken
+        };
+        mySessionStorage.setItem('cbt-session', JSON.stringify(userObj));
+        mySessionStorage.setItem('cbt-schedule', JSON.stringify(schedule));
+        if (resumeProgress) {
+          mySessionStorage.setItem('cbt-resume-progress', JSON.stringify(resumeProgress));
+        } else {
+          mySessionStorage.removeItem('cbt-resume-progress');
+        }
+        window.location.href = 'ujian.html';
+      } catch (err) {
+        if (typeof showAuthLoginStatus === 'function') {
+          showAuthLoginStatus({
+            variant: 'error',
+            title: 'Verifikasi Gagal',
+            message: err.message || 'Terjadi kesalahan saat memverifikasi data.'
+          });
+        }
+      } finally {
+        studentLoginInFlight = false;
+        toggleLoader(false);
+      }
+    }
+
+    async function handleAdminLogin(e) {
+      e.preventDefault();
+      if (adminLoginInFlight) return;
+      adminLoginInFlight = true;
+      const eb = document.getElementById('admin-error-banner');
+      const et = document.getElementById('admin-error-message');
+      try {
+        const userEl = document.getElementById('admin-username');
+        const passEl = document.getElementById('admin-password');
+        if (!userEl || !passEl || !eb || !et) {
+          throw new Error('Form admin tidak siap. Muat ulang halaman.');
+        }
+        const user = userEl.value.trim();
+        const pass = passEl.value;
+        if (!user || !pass) {
+          et.innerText = "Username dan password admin harus diisi.";
+          eb.classList.remove('hidden');
+          return;
+        }
+        eb.classList.add('hidden');
+        toggleLoader(true, "AUTENTIKASI...");
+        const as = await getDoc(getPublicDoc("Admin", user));
+        if (as.exists() && as.data().password === pass) {
+          const adminObj = { username: user, role: 'admin' };
+          mySessionStorage.setItem('cbt-session', JSON.stringify(adminObj));
+          document.getElementById('admin-auth-modal').classList.add('hidden');
+          window.location.href = 'admin.html';
+        } else throw new Error("Kredensial Salah.");
+      } catch (err) {
+        if (et && eb) {
+          et.innerText = err.message || 'Autentikasi gagal.';
+          eb.classList.remove('hidden');
+        }
+      } finally {
+        adminLoginInFlight = false;
+        toggleLoader(false);
+      }
+    }
+
+    function setupInteractiveListeners() {
+
+      const toggleAuthPwdBtn = document.getElementById('toggle-auth-password');
+      if (toggleAuthPwdBtn) {
+        toggleAuthPwdBtn.addEventListener('click', () => {
+          const pwdInput = document.getElementById('login-password');
+          if (pwdInput) {
+            pwdInput.type = pwdInput.type === 'password' ? 'text' : 'password';
+          }
+        });
+      }
+
+      const toggleAdminPwdBtn = document.getElementById('toggle-admin-password');
+      if (toggleAdminPwdBtn) {
+        toggleAdminPwdBtn.addEventListener('click', () => {
+          const pwdInput = document.getElementById('admin-password');
+          if (pwdInput) {
+            pwdInput.type = pwdInput.type === 'password' ? 'text' : 'password';
+          }
+        });
+      }
+
+      const toggleThemeAuthBtn = document.getElementById('toggle-theme-auth');
+      if (toggleThemeAuthBtn) {
+        toggleThemeAuthBtn.addEventListener('click', toggleTheme);
+      }
+
+      const triggerAdminModalBtn = document.getElementById('btn-trigger-admin-modal');
+      const adminModal = document.getElementById('admin-auth-modal');
+      const studentLoginPanel = document.getElementById('student-login-panel');
+      if (triggerAdminModalBtn && adminModal) {
+        triggerAdminModalBtn.addEventListener('click', () => {
+          adminModal.classList.remove('hidden');
+          if (studentLoginPanel) studentLoginPanel.classList.add('hidden');
+        });
+      }
+
+      const closeAdminModalBtn = document.getElementById('btn-close-admin-modal');
+      if (closeAdminModalBtn && adminModal) {
+        closeAdminModalBtn.addEventListener('click', () => {
+          adminModal.classList.add('hidden');
+          if (studentLoginPanel) studentLoginPanel.classList.remove('hidden');
+        });
+      }
+
+      const studentForm = document.getElementById('student-login-form');
+      if (studentForm) {
+        studentForm.addEventListener('submit', (e) => {
+
+          authInputStatePushed = false;
+          handleStudentLogin(e);
+        });
+        studentForm.querySelectorAll('input').forEach((input) => {
+          input.addEventListener('input', () => {
+            if (typeof hideAuthLoginStatus === 'function') hideAuthLoginStatus();
+          });
+        });
+      }
+
+      const adminForm = document.getElementById('admin-login-form');
+      if (adminForm) {
+        adminForm.addEventListener('submit', (e) => {
+          authInputStatePushed = false;
+          handleAdminLogin(e);
+        });
+      }
+
+      let authInputStatePushed = false;
+      const authInputs = document.querySelectorAll('#student-login-form input, #admin-login-form input');
+
+      authInputs.forEach((input) => {
+        input.addEventListener('focus', () => {
+          window.focus();
+          if (window.innerWidth < 768 && !authInputStatePushed) {
+            authInputStatePushed = true;
+            history.pushState({ authInputFocus: true }, '');
+          }
+        });
+
+        input.addEventListener('blur', () => {
+          setTimeout(() => {
+            const activeEl = document.activeElement;
+            const isStillInput = activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA');
+            if (!isStillInput && authInputStatePushed) {
+              authInputStatePushed = false;
+
+              history.back();
+            }
+          }, 150);
+        });
+      });
+
+      window.addEventListener('popstate', (e) => {
+        if (authInputStatePushed) {
+          authInputStatePushed = false;
+          const activeEl = document.activeElement;
+          if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA')) {
+            activeEl.blur();
+          }
+        }
+      });
+
+      document.querySelectorAll('#student-login-form .relative, #admin-login-form .relative').forEach(container => {
+        container.addEventListener('click', function (e) {
+          if (e.target.tagName === 'INPUT') return;
+          const input = this.querySelector('input');
+          if (input) input.focus();
+        });
+      });
+    }
+
+    window.addEventListener('DOMContentLoaded', async () => {
+
+      try {
+        if (document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement) {
+          const exitFs = document.exitFullscreen || document.webkitExitFullscreen || document.mozCancelFullScreen || document.msExitFullscreen;
+          if (exitFs) await exitFs.call(document);
+        }
+      } catch (e) {
+        console.warn('Gagal keluar fullscreen otomatis:', e);
+      }
+      window.focus();
+
+      try {
+        if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
+      } catch (e) {
+        console.warn('lucide.createIcons failed', e);
+      }
+      initRealtimeClock();
+      applyTheme();
+      initAppSettingsElements();
+      try {
+        if (typeof initAppSettings === 'function') await initAppSettings();
+      } catch (err) {
+        console.warn('initAppSettings failed', err);
+      }
+      renderAppSettingsUI();
+      if (typeof initAdminHeaderAutoFit === 'function') initAdminHeaderAutoFit();
+      if (typeof refreshAppSettingsFromCloud === 'function') refreshAppSettingsFromCloud();
+      const resetMsg = mySessionStorage.getItem('cbt-proctor-reset-msg');
+      if (resetMsg) {
+        mySessionStorage.removeItem('cbt-proctor-reset-msg');
+        if (typeof showAuthLoginStatus === 'function') {
+          showAuthLoginStatus({
+            variant: 'info',
+            title: 'Sesi Direset',
+            message: resetMsg,
+            lucideIcon: 'refresh-cw'
+          });
+        }
+      } else {
+
+        mySessionStorage.removeItem('cbt-resume-exam');
+      }
+      const loginStatusMsg = mySessionStorage.getItem('cbt-login-status-msg');
+      if (loginStatusMsg) {
+        mySessionStorage.removeItem('cbt-login-status-msg');
+        try {
+          const payload = JSON.parse(loginStatusMsg);
+          if (typeof showAuthLoginStatus === 'function') showAuthLoginStatus(payload);
+        } catch (parseErr) {
+          if (typeof showAuthLoginStatus === 'function') {
+            showAuthLoginStatus({
+              variant: 'error',
+              title: 'Sesi Error',
+              message: loginStatusMsg
+            });
+          }
+        }
+      }
+      setupInteractiveListeners();
+      requestAnimationFrame(() => {
+        const nisInput = document.getElementById('login-nis');
+        if (nisInput) nisInput.focus();
+      });
+      try {
+        await initAuth();
+        checkSavedSession();
+      } catch (err) {
+        if (typeof showAuthLoginStatus === 'function') {
+          showAuthLoginStatus({
+            variant: 'error',
+            title: 'Koneksi Gagal',
+            message: 'Gagal menghubungi server. Periksa koneksi internet dan muat ulang halaman.'
+          });
+        }
+      }
+    });
+  </script>
+</body>
+
+</html>
