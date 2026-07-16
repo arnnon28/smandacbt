@@ -1,0 +1,17 @@
+var firebaseUser = null, CURRENT_USER = null;
+var ALL_STUDENTS = [], ALL_PACKETS = [], ALL_SCHEDULES = [], ALL_RESULTS = [], ACTIVE_MONITOR_DATA = [], ALL_ADMINS = [];
+var CACHE_AGGREGATIONS = { timestamp: 0, data: { totalSiswa: 0, totalKelas: 0, totalPaket: 0, totalJadwal: 0, sedangUjian: 0, sudahSubmit: 0 } };
+var unsubscribeStudents = null, unsubscribeSchedules = null, unsubscribeMonitor = null, unsubscribeResults = null, unsubscribePackets = null, unsubscribeAdmins = null;
+var sidebarCollapsed = false;
+var PAGINATION_STATE = { students: 1, monitor: 1, banksoal: 1, results: 1, dashboard: 1, admins: 1, schedules: 1, packets: 1 };
+var RESULTS_POLL_MS = 60000;
+var JAWABAN_SISWA_LIGHT_COLS = 'id,nis,nama,kelas,mapel,waktu_kirim,status,jumlah_benar,jumlah_salah,nilai,penjelasan';
+var SISWA_LIGHT_COLS = 'nis,nama,kelas,jenis_kelamin,password';
+var SESSION_UJIAN_COLS = 'id,nis,token,mulai_ujian,waktu_terakhir,total_soal,cheat_detected,force_finished,force_reset,admin_alert_active,admin_alert_message,admin_alert_id,admin_alert_by';
+var BANK_SOAL_LIGHT_COLS = 'id_paket,nama_paket,jumlah_soal,konten_versi';
+var JADWAL_UJIAN_COLS = 'id,mapel,id_paket,mulai,selesai,durasi,kelas_terpilih,token,tampil_nilai';
+var ADMIN_LIGHT_COLS = 'username,password';
+var CURRENT_ADMIN_VIEW = 'admin-dashboard';
+var CACHED_CLASS_LIST = '';
+var CACHED_RESULT_MAPEL = '';
+var adminDomUpdateTimers = {};
